@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 import 'package:story_roles_web/core/injector.dart';
-import 'package:story_roles_web/presentation/player/player_manager.dart';
+import 'package:story_roles_web/presentation/player/bloc/player_bloc.dart';
 import 'package:story_roles_web/presentation/screens/auth/bloc/auth_bloc.dart';
 import 'package:story_roles_web/presentation/screens/auth/login_screen.dart';
 import 'package:story_roles_web/presentation/screens/main/main_screen.dart';
@@ -21,12 +20,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create:
-          (_) => PlayerManager(
-            dio: Injector().dioInstance,
-            storageDataSource: Injector().resolve(),
-          ),
+    return BlocProvider(
+      create: (_) => PlayerBloc(
+        dio: Injector().dioInstance,
+        storageDataSource: Injector().resolve(),
+      ),
       child: BlocProvider.value(
         value: Injector().resolve<AuthBloc>()..add(AppStarted()),
         child: BlocListener<AuthBloc, AuthState>(
@@ -36,12 +34,20 @@ class MyApp extends StatelessWidget {
             if (nav == null) return;
             if (state.status == AuthStatus.unauthenticated) {
               nav.pushAndRemoveUntil(
-                MaterialPageRoute(builder: (_) => const LoginScreen()),
+                PageRouteBuilder(
+                  pageBuilder: (ctx, a, b) => const LoginScreen(),
+                  transitionDuration: Duration.zero,
+                  reverseTransitionDuration: Duration.zero,
+                ),
                 (route) => false,
               );
             } else if (state.status == AuthStatus.authenticated) {
               nav.pushAndRemoveUntil(
-                MaterialPageRoute(builder: (_) => const MainScreen()),
+                PageRouteBuilder(
+                  pageBuilder: (ctx, a, b) => const MainScreen(),
+                  transitionDuration: Duration.zero,
+                  reverseTransitionDuration: Duration.zero,
+                ),
                 (route) => false,
               );
             }

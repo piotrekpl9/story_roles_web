@@ -3,6 +3,7 @@ import 'package:story_roles_web/data/datasources/abstractions/auth_web_api.dart'
 import 'package:story_roles_web/data/datasources/abstractions/storage_data_source.dart';
 import 'package:story_roles_web/data/models/login_request_dto.dart';
 import 'package:story_roles_web/data/models/login_response_dto.dart';
+import 'package:story_roles_web/data/models/profile_response_dto.dart';
 import 'package:story_roles_web/data/models/register_request_dto.dart';
 import 'package:story_roles_web/data/models/register_response_dto.dart';
 import 'package:story_roles_web/domain/repositories/auth_repository.dart';
@@ -43,5 +44,10 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Result> logout() async {
     await storageDataSource.removeToken();
     return Success(());
+  }
+
+  @override
+  Future<Result<ProfileResponseDto>> getProfile() async {
+    return webApi.getProfile();
   }
 }

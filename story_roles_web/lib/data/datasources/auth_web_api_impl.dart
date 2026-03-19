@@ -4,6 +4,7 @@ import 'package:story_roles_web/core/utils/result.dart';
 import 'package:story_roles_web/data/datasources/abstractions/auth_web_api.dart';
 import 'package:story_roles_web/data/models/login_request_dto.dart';
 import 'package:story_roles_web/data/models/login_response_dto.dart';
+import 'package:story_roles_web/data/models/profile_response_dto.dart';
 import 'package:story_roles_web/data/models/register_request_dto.dart';
 import 'package:story_roles_web/data/models/register_response_dto.dart';
 import 'package:story_roles_web/data/utils/data_consts.dart';
@@ -59,6 +60,16 @@ class AuthWebApiImpl implements AuthWebApi {
       );
     } catch (e) {
       return Error(RegistrationFailure());
+    }
+  }
+
+  @override
+  Future<Result<ProfileResponseDto>> getProfile() async {
+    try {
+      final response = await dio.get(DataConsts.endpoints.getProfile);
+      return Success(ProfileResponseDto.fromJson(response.data));
+    } catch (e) {
+      return Error(const AuthFailure('Get profile failed'));
     }
   }
 }

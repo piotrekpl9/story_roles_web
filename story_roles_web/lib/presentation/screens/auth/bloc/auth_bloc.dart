@@ -59,14 +59,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final result = await _login(email: event.email, password: event.password);
 
     result.fold(
-      onSuccess: (dto) => emit(
-        state.copyWith(
-          status: AuthStatus.authenticated,
-          email: dto.email,
-          createdAt: dto.createdAt,
-          errorMessage: null,
-        ),
-      ),
+      onSuccess: (dto) {
+        print('TOKEN: ${dto.token}');
+        emit(
+          state.copyWith(
+            status: AuthStatus.authenticated,
+            email: dto.email,
+            createdAt: dto.createdAt,
+            errorMessage: null,
+          ),
+        );
+      },
       onError: (_) => emit(
         state.copyWith(
           status: AuthStatus.unauthenticated,

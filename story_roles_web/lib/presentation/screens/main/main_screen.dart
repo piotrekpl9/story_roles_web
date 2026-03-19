@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:story_roles_web/core/injector.dart';
 import 'package:story_roles_web/presentation/player/persistent_player_bar.dart';
-import 'package:story_roles_web/presentation/player/player_manager.dart';
+import 'package:story_roles_web/presentation/player/bloc/player_bloc.dart';
+import 'package:story_roles_web/presentation/player/bloc/player_event.dart';
 import 'package:story_roles_web/presentation/screens/home/bloc/home_bloc.dart';
 import 'package:story_roles_web/presentation/screens/home/home_view.dart';
 import 'package:story_roles_web/presentation/screens/profile/profile_screen.dart';
@@ -53,7 +54,7 @@ class _MainScreenState extends State<MainScreen> {
                         },
                         child: HomeView(
                           onTrackSelected: (track) =>
-                              context.read<PlayerManager>().playTrack(track),
+                              context.read<PlayerBloc>().add(PlayTrackEvent(track)),
                         ),
                       ),
 

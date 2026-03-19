@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:story_roles_web/domain/entities/player_state.dart';
-import 'package:story_roles_web/presentation/player/player_manager.dart';
+import 'package:story_roles_web/presentation/player/bloc/player_bloc.dart';
+import 'package:story_roles_web/presentation/player/bloc/player_bloc_state.dart';
+import 'package:story_roles_web/presentation/player/bloc/player_event.dart';
 import 'package:story_roles_web/presentation/utils/app_config/app_colors.dart';
 
 class PersistentPlayerBar extends StatelessWidget {
@@ -15,17 +17,17 @@ class PersistentPlayerBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<PlayerManager>(
-      builder: (context, manager, _) {
-        if (!manager.hasTrack) return const SizedBox.shrink();
+    return BlocBuilder<PlayerBloc, PlayerBlocState>(
+      builder: (context, state) {
+        if (!state.hasTrack) return const SizedBox.shrink();
 
-        final track = manager.currentTrack!;
-        final state = manager.playerState;
-        final isPlaying = state.status == PlaybackStatus.playing;
-        final isLoading = manager.isLoading;
+        final track = state.currentTrack!;
+        final playerState = state.playerState;
+        final isPlaying = playerState.status == PlaybackStatus.playing;
+        final isLoading = state.isLoading;
 
-        final posMs = state.position.inMilliseconds.toDouble();
-        final durMs = state.duration?.inMilliseconds.toDouble() ?? 0.0;
+        final posMs = playerState.position.inMilliseconds.toDouble();
+        final durMs = playerState.duration?.inMilliseconds.toDouble() ?? 0.0;
 
         return Container(
           height: 88,
@@ -91,11 +93,11 @@ class PersistentPlayerBar extends StatelessWidget {
                           onPressed: isLoading
                               ? null
                               : () {
-                                  final np = state.position -
+                                  final np = playerState.position -
                                       const Duration(seconds: 10);
-                                  manager.seek(
+                                  context.read<PlayerBloc>().add(SeekEvent(
                                     np < Duration.zero ? Duration.zero : np,
-                                  );
+                                  ));
                                 },
                         ),
                         const SizedBox(width: 8),
@@ -117,7 +119,8 @@ class PersistentPlayerBar extends StatelessWidget {
                             ),
                             iconSize: 44,
                             color: AppColors.primary,
-                            onPressed: manager.togglePlay,
+                            onPressed: () =>
+                                context.read<PlayerBloc>().add(TogglePlayEvent()),
                           ),
                         const SizedBox(width: 8),
                         IconButton(
@@ -128,10 +131,12 @@ class PersistentPlayerBar extends StatelessWidget {
                               ? null
                               : () {
                                   final dur =
-                                      state.duration ?? Duration.zero;
-                                  final np = state.position +
+                                      playerState.duration ?? Duration.zero;
+                                  final np = playerState.position +
                                       const Duration(seconds: 10);
-                                  manager.seek(np > dur ? dur : np);
+                                  context.read<PlayerBloc>().add(
+                                    SeekEvent(np > dur ? dur : np),
+                                  );
                                 },
                         ),
                       ],
@@ -141,7 +146,7 @@ class PersistentPlayerBar extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          _fmt(state.position),
+                          _fmt(playerState.position),
                           style: TextStyle(
                             color: AppColors.onBackground.withValues(alpha: 0.6),
                             fontSize: 11,
@@ -171,15 +176,17 @@ class PersistentPlayerBar extends StatelessWidget {
                               ),
                               max: durMs > 0 ? durMs : 1.0,
                               onChanged: durMs > 0 && !isLoading
-                                  ? (v) => manager.seek(
-                                        Duration(milliseconds: v.toInt()),
+                                  ? (v) => context.read<PlayerBloc>().add(
+                                        SeekEvent(Duration(
+                                          milliseconds: v.toInt(),
+                                        )),
                                       )
                                   : null,
                             ),
                           ),
                         ),
                         Text(
-                          _fmt(state.duration ?? Duration.zero),
+                          _fmt(playerState.duration ?? Duration.zero),
                           style: TextStyle(
                             color: AppColors.onBackground.withValues(alpha: 0.6),
                             fontSize: 11,
