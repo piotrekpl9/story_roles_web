@@ -123,6 +123,7 @@ class _HomeViewState extends State<HomeView> {
                       ),
                     )
                   : GridView.builder(
+                      physics: const ClampingScrollPhysics(),
                       padding: const EdgeInsets.fromLTRB(28, 0, 28, 28),
                       gridDelegate:
                           const SliverGridDelegateWithMaxCrossAxisExtent(

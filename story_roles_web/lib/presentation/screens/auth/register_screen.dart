@@ -20,18 +20,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _emailController;
   late final TextEditingController _passwordController;
+  late final FocusNode _passwordFocusNode;
 
   @override
   void initState() {
     super.initState();
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
+    _passwordFocusNode = FocusNode();
   }
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _passwordFocusNode.dispose();
     super.dispose();
   }
 
@@ -95,6 +98,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 420),
             child: SingleChildScrollView(
+              physics: const ClampingScrollPhysics(),
               padding: const EdgeInsets.all(32),
               child: Form(
                 key: _formKey,
@@ -121,6 +125,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       controller: _emailController,
                       label: AppLocalizations.of(context)!.email,
                       validator: _validateEmail,
+                      onFieldSubmitted: (_) => _passwordFocusNode.requestFocus(),
                     ),
                     const SizedBox(height: 16),
                     GenericInput(
@@ -128,6 +133,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       label: AppLocalizations.of(context)!.password,
                       obscureText: true,
                       validator: _validatePassword,
+                      focusNode: _passwordFocusNode,
+                      onFieldSubmitted: (_) => _handleRegister(),
                     ),
                     const SizedBox(height: 24),
                     BlocBuilder<AuthBloc, AuthState>(

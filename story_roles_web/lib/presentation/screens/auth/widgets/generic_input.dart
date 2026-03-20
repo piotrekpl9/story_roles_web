@@ -8,6 +8,7 @@ class GenericInput extends StatelessWidget {
   final String? Function(String?)? validator;
   final bool obscureText;
   final void Function(String)? onFieldSubmitted;
+  final FocusNode? focusNode;
 
   const GenericInput({
     super.key,
@@ -16,6 +17,7 @@ class GenericInput extends StatelessWidget {
     this.validator,
     this.obscureText = false,
     this.onFieldSubmitted,
+    this.focusNode,
   });
 
   @override
@@ -25,6 +27,7 @@ class GenericInput extends StatelessWidget {
       obscureText: obscureText,
       validator: validator,
       onFieldSubmitted: onFieldSubmitted,
+      focusNode: focusNode,
       style: AppTypography.inputLabelRegular,
       decoration: InputDecoration(
         labelStyle: AppTypography.inputLabelRegular,

@@ -129,6 +129,7 @@ class _TrackUploadViewState extends State<TrackUploadView> {
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 520),
           child: SingleChildScrollView(
+            physics: const ClampingScrollPhysics(),
             padding: const EdgeInsets.all(32),
             child: Form(
               key: _formKey,

@@ -85,6 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 420),
             child: SingleChildScrollView(
+              physics: const ClampingScrollPhysics(),
               padding: const EdgeInsets.all(32),
               child: Form(
                 key: _formKey,
@@ -143,9 +144,12 @@ class _LoginScreenState extends State<LoginScreen> {
                               onPressed: isLoading
                                   ? null
                                   : () => Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (_) =>
+                                        PageRouteBuilder(
+                                          pageBuilder: (ctx, a, b) =>
                                               const RegisterScreen(),
+                                          transitionDuration: Duration.zero,
+                                          reverseTransitionDuration:
+                                              Duration.zero,
                                         ),
                                       ),
                               label: AppLocalizations.of(context)!.register,
