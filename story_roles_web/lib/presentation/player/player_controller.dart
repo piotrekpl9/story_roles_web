@@ -10,6 +10,7 @@ class PlayerController {
 
   Duration _position = Duration.zero;
   Duration? _duration;
+  bool _disposed = false;
 
   PlayerController() {
     _player.onDurationChanged.listen((d) {
@@ -26,6 +27,7 @@ class PlayerController {
   }
 
   void _emitState() {
+    if (_disposed) return;
     PlaybackStatus status;
     switch (_player.state) {
       case ap.PlayerState.playing:
@@ -33,7 +35,7 @@ class PlayerController {
       case ap.PlayerState.paused:
         status = PlaybackStatus.paused;
       case ap.PlayerState.completed:
-        status = PlaybackStatus.paused;
+        status = PlaybackStatus.completed;
       case ap.PlayerState.stopped:
         status = PlaybackStatus.stopped;
       case ap.PlayerState.disposed:
@@ -61,6 +63,7 @@ class PlayerController {
   PlayerState get currentState => _stateNotifier.value;
 
   void dispose() {
+    _disposed = true;
     _player.dispose();
     _stateNotifier.dispose();
   }

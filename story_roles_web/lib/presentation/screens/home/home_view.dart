@@ -4,6 +4,7 @@ import 'package:story_roles_web/domain/entities/track.dart';
 import 'package:story_roles_web/presentation/screens/home/bloc/home_bloc.dart';
 import 'package:story_roles_web/presentation/utils/app_config/app_colors.dart';
 import 'package:story_roles_web/presentation/utils/app_config/app_typography.dart';
+import 'package:story_roles_web/presentation/widgets/track_card.dart';
 
 class HomeView extends StatefulWidget {
   final ValueChanged<Track> onTrackSelected;
@@ -133,7 +134,7 @@ class _HomeViewState extends State<HomeView> {
                         childAspectRatio: 0.78,
                       ),
                       itemCount: filtered.length,
-                      itemBuilder: (context, i) => _TrackCard(
+                      itemBuilder: (context, i) => TrackCard(
                         track: filtered[i],
                         onTap: filtered[i].attributes.status ==
                                 TrackStatus.completed
@@ -145,122 +146,6 @@ class _HomeViewState extends State<HomeView> {
           ],
         );
       },
-    );
-  }
-}
-
-class _TrackCard extends StatefulWidget {
-  final Track track;
-  final VoidCallback? onTap;
-
-  const _TrackCard({required this.track, this.onTap});
-
-  @override
-  State<_TrackCard> createState() => _TrackCardState();
-}
-
-class _TrackCardState extends State<_TrackCard> {
-  bool _hovered = false;
-
-  @override
-  Widget build(BuildContext context) {
-    final ready = widget.track.attributes.status == TrackStatus.completed;
-
-    return MouseRegion(
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
-      cursor: ready ? SystemMouseCursors.click : SystemMouseCursors.basic,
-      child: GestureDetector(
-        onTap: widget.onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 120),
-          decoration: BoxDecoration(
-            color: _hovered ? AppColors.cardHover : AppColors.card,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(6),
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              Colors.purple[300]!,
-                              Colors.blue[400]!,
-                            ],
-                          ),
-                        ),
-                        child: const Center(
-                          child: Icon(
-                            Icons.music_note,
-                            color: Colors.white,
-                            size: 52,
-                          ),
-                        ),
-                      ),
-                      if (_hovered && ready)
-                        Positioned(
-                          bottom: 8,
-                          right: 8,
-                          child: Container(
-                            width: 42,
-                            height: 42,
-                            decoration: BoxDecoration(
-                              color: AppColors.primary,
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.4),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            child: const Icon(
-                              Icons.play_arrow,
-                              color: Colors.white,
-                              size: 26,
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                widget.track.attributes.title,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 4),
-              Text(
-                ready ? 'Ready to play' : 'Processing...',
-                style: TextStyle(
-                  color: ready
-                      ? AppColors.onBackground.withValues(alpha: 0.6)
-                      : Colors.orange,
-                  fontSize: 12,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

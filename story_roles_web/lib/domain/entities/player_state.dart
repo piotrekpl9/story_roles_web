@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-enum PlaybackStatus { playing, paused, stopped, loading, buffering }
+enum PlaybackStatus { playing, paused, stopped, loading, buffering, completed }
 
 class PlayerState extends Equatable {
   final PlaybackStatus status;

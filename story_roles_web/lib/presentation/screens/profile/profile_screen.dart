@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:story_roles_web/presentation/screens/auth/bloc/auth_bloc.dart';
 import 'package:story_roles_web/presentation/utils/app_config/app_colors.dart';
 import 'package:story_roles_web/presentation/widgets/button_primary.dart';
+import 'package:story_roles_web/presentation/widgets/info_row.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -57,12 +58,12 @@ class ProfileScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _InfoRow(
+                        InfoRow(
                           label: 'Email',
                           value: state.email ?? 'Not available',
                         ),
                         const SizedBox(height: 20),
-                        _InfoRow(
+                        InfoRow(
                           label: 'Member since',
                           value: state.createdAt != null
                               ? DateFormat('MMMM d, y').format(state.createdAt!)
@@ -87,35 +88,3 @@ class ProfileScreen extends StatelessWidget {
   }
 }
 
-class _InfoRow extends StatelessWidget {
-  final String label;
-  final String value;
-
-  const _InfoRow({required this.label, required this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            color: AppColors.onBackground.withValues(alpha: 0.6),
-            fontSize: 12,
-            letterSpacing: 0.5,
-          ),
-        ),
-        const SizedBox(height: 6),
-        Text(
-          value,
-          style: TextStyle(
-            color: AppColors.onBackground,
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ],
-    );
-  }
-}
