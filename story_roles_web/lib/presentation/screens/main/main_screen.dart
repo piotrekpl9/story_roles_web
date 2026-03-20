@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:story_roles_web/core/injector.dart';
 import 'package:story_roles_web/presentation/player/persistent_player_bar.dart';
+import 'package:story_roles_web/domain/entities/player_state.dart';
 import 'package:story_roles_web/presentation/player/bloc/player_bloc.dart';
+import 'package:story_roles_web/presentation/player/bloc/player_bloc_state.dart';
 import 'package:story_roles_web/presentation/player/bloc/player_event.dart';
 import 'package:story_roles_web/presentation/screens/home/bloc/home_bloc.dart';
 import 'package:story_roles_web/presentation/screens/home/home_view.dart';
@@ -52,9 +54,23 @@ class _MainScreenState extends State<MainScreen> {
                           )..add(LoadHomeEvent());
                           return _homeBloc!;
                         },
-                        child: HomeView(
-                          onTrackSelected: (track) =>
-                              context.read<PlayerBloc>().add(PlayTrackEvent(track)),
+                        child: BlocListener<PlayerBloc, PlayerBlocState>(
+                          listenWhen: (prev, curr) =>
+                              (prev.playerState.status !=
+                                      curr.playerState.status &&
+                                  curr.playerState.status ==
+                                      PlaybackStatus.completed) ||
+                              (prev.currentTrack?.id != curr.currentTrack?.id &&
+                                  prev.currentTrack != null),
+                          listener: (ctx, _) {
+                            Future.delayed(const Duration(seconds: 2), () {
+                              _homeBloc?.add(RefreshProgressesEvent());
+                            });
+                          },
+                          child: HomeView(
+                            onTrackSelected: (track) =>
+                                context.read<PlayerBloc>().add(PlayTrackEvent(track)),
+                          ),
                         ),
                       ),
 

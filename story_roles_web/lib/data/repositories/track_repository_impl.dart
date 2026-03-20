@@ -5,6 +5,7 @@ import 'package:story_roles_web/core/utils/result.dart';
 import 'package:story_roles_web/data/datasources/abstractions/track_upload_web_api.dart';
 import 'package:story_roles_web/data/datasources/abstractions/track_web_api.dart';
 import 'package:story_roles_web/domain/entities/track.dart';
+import 'package:story_roles_web/domain/entities/track_progress.dart';
 import 'package:story_roles_web/domain/repositories/track_repository.dart';
 
 class TrackRepositoryImpl implements TrackRepository {
@@ -40,4 +41,28 @@ class TrackRepositoryImpl implements TrackRepository {
       return Error(const ServerFailure('Failed to upload track'));
     }
   }
+
+  @override
+  Future<Result> renameTrack(int trackId, String newTitle) async {
+    try {
+      await trackWebApi.rename(trackId, newTitle);
+      return Success(());
+    } catch (_) {
+      return Error(const ServerFailure('Failed to rename track'));
+    }
+  }
+
+  @override
+  Future<Result> deleteTrack(int trackId) async {
+    try {
+      await trackWebApi.delete(trackId);
+      return Success(());
+    } catch (_) {
+      return Error(const ServerFailure('Failed to delete track'));
+    }
+  }
+
+  @override
+  Future<Map<int, TrackProgress>> getAudioProgresses() =>
+      trackWebApi.getAudioProgresses();
 }

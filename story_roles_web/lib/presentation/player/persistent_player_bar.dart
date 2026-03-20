@@ -198,7 +198,20 @@ class PersistentPlayerBar extends StatelessWidget {
                 ),
               ),
 
-              const Expanded(flex: 3, child: SizedBox()),
+              Expanded(
+                flex: 3,
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: IconButton(
+                    icon: const Icon(Icons.close),
+                    color: Colors.white54,
+                    iconSize: 20,
+                    tooltip: 'Close',
+                    onPressed: () =>
+                        context.read<PlayerBloc>().add(ClosePlayerEvent()),
+                  ),
+                ),
+              ),
             ],
           ),
         );

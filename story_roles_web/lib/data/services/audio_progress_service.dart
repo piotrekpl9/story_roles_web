@@ -66,10 +66,10 @@ class AudioProgressService {
     }
   }
 
-  void dispose() {
+  Future<void> dispose() async {
     if (_disposed) return;
     _disposed = true;
     _saveTimer?.cancel();
-    saveProgress();
+    await saveProgress();
   }
 }

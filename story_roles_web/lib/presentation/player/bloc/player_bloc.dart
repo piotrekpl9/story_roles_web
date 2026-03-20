@@ -27,6 +27,7 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerBlocState> {
     on<TogglePlayEvent>(_onTogglePlay);
     on<SeekEvent>(_onSeek);
     on<PlayerStateUpdated>(_onPlayerStateUpdated);
+    on<ClosePlayerEvent>(_onClosePlayer);
   }
 
   PlayerState get _currentPlayerState =>
@@ -43,7 +44,7 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerBlocState> {
       playerState: const PlayerState.initial(),
     ));
 
-    _progressService?.dispose();
+    await _progressService?.dispose();
     _progressService = null;
     _controller?.dispose();
     _controller = PlayerController();
@@ -129,6 +130,17 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerBlocState> {
       print('[AudioProgress] fetchSavedProgress error: $e');
     }
     return Duration.zero;
+  }
+
+  Future<void> _onClosePlayer(
+    ClosePlayerEvent event,
+    Emitter<PlayerBlocState> emit,
+  ) async {
+    await _progressService?.dispose();
+    _progressService = null;
+    _controller?.dispose();
+    _controller = null;
+    emit(state.copyWith(clearTrack: true, playerState: const PlayerState.initial()));
   }
 
   void _onPlayerStateUpdated(

@@ -15,3 +15,5 @@ class SeekEvent extends PlayerEvent {
 }
 
 class PlayerStateUpdated extends PlayerEvent {}
+
+class ClosePlayerEvent extends PlayerEvent {}

@@ -14,6 +14,9 @@ class _Endpoints {
       '/api/v1/tracks/$trackId/audio_progress';
   String saveAudioProgress(int trackId) =>
       '/api/v1/tracks/$trackId/audio_progress/save';
+  String renameTrack(int trackId) => '/api/v1/tracks/$trackId';
+  String deleteTrack(int trackId) => '/api/v1/tracks/$trackId';
+  final String getAudioProgresses = '/api/v1/audio_progresses';
 }
 
 class _ApiParameters {

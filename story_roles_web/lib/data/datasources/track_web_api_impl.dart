@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:story_roles_web/data/datasources/abstractions/track_web_api.dart';
 import 'package:story_roles_web/data/models/track_response_dto.dart';
 import 'package:story_roles_web/data/utils/data_consts.dart';
+import 'package:story_roles_web/domain/entities/track_progress.dart';
 
 class TrackWebApiImpl implements TrackWebApi {
   final Dio dio;
@@ -15,5 +16,38 @@ class TrackWebApiImpl implements TrackWebApi {
             ?.map((e) => TrackResponseDto.fromJson(e))
             .toList() ??
         [];
+  }
+
+  @override
+  Future<void> rename(int trackId, String newTitle) async {
+    await dio.patch(
+      DataConsts.endpoints.renameTrack(trackId),
+      data: {'track': {'title': newTitle}},
+    );
+  }
+
+  @override
+  Future<void> delete(int trackId) async {
+    await dio.delete(DataConsts.endpoints.deleteTrack(trackId));
+  }
+
+  @override
+  Future<Map<int, TrackProgress>> getAudioProgresses() async {
+    final response = await dio.get(DataConsts.endpoints.getAudioProgresses);
+    final list = response.data['data']['audio_progresses'] as List? ?? [];
+    final result = <int, TrackProgress>{};
+    for (final e in list) {
+      final attrs = e['attributes'] as Map<String, dynamic>?;
+      if (attrs == null) continue;
+      final progress = (attrs['progress_seconds'] as num?)?.toDouble() ?? 0;
+      if (progress <= 0) continue;
+      final trackId = (attrs['track_id'] as num).toInt();
+      result[trackId] = TrackProgress(
+        trackId: trackId,
+        progressSeconds: progress,
+        durationSeconds: (attrs['duration_seconds'] as num?)?.toDouble() ?? 0,
+      );
+    }
+    return result;
   }
 }
