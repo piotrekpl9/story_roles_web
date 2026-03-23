@@ -1,0 +1,8 @@
+.git
+.idea
+proxy
+story_roles_web/.dart_tool
+story_roles_web/build
+story_roles_web/.packages
+story_roles_web/.flutter-plugins
+story_roles_web/.flutter-plugins-dependencies
