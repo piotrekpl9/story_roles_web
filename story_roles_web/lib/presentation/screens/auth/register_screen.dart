@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:story_roles_web/presentation/screens/auth/bloc/auth_bloc.dart';
 import 'package:story_roles_web/presentation/screens/auth/widgets/generic_input.dart';
 import 'package:story_roles_web/presentation/utils/app_config/app_colors.dart';
@@ -81,7 +82,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               backgroundColor: Colors.green,
             ),
           );
-          Navigator.of(context).pop();
+          context.go('/login');
         } else if (state.errorMessage != null) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -159,7 +160,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ButtonSecondary(
                               onPressed: isLoading
                                   ? null
-                                  : () => Navigator.of(context).pop(),
+                                  : () => context.go('/login'),
                               label: AppLocalizations.of(context)!.backToLogin,
                             ),
                           ],

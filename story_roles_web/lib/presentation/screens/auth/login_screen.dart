@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:story_roles_web/presentation/screens/auth/bloc/auth_bloc.dart';
-import 'package:story_roles_web/presentation/screens/auth/register_screen.dart';
 import 'package:story_roles_web/presentation/screens/auth/widgets/generic_input.dart';
 import 'package:story_roles_web/presentation/utils/app_config/app_colors.dart';
 import 'package:story_roles_web/presentation/utils/app_config/app_typography.dart';
@@ -143,15 +143,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ButtonSecondary(
                               onPressed: isLoading
                                   ? null
-                                  : () => Navigator.of(context).push(
-                                        PageRouteBuilder(
-                                          pageBuilder: (ctx, a, b) =>
-                                              const RegisterScreen(),
-                                          transitionDuration: Duration.zero,
-                                          reverseTransitionDuration:
-                                              Duration.zero,
-                                        ),
-                                      ),
+                                  : () => context.go('/register'),
                               label: AppLocalizations.of(context)!.register,
                             ),
                           ],
