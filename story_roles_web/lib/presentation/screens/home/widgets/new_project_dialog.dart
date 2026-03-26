@@ -38,7 +38,7 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
             borderSide: BorderSide(color: AppColors.primary),
           ),
         ),
-        onSubmitted: (_) => Navigator.of(context).pop(true),
+        onSubmitted: (_) => Navigator.of(context).pop(_projectNameController.text),
       ),
       actions: [
         TextButton(

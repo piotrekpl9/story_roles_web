@@ -16,12 +16,14 @@ class ChapterResponseDto {
   });
 
   factory ChapterResponseDto.fromJson(Map<String, dynamic> json) {
+    final attrs = json['attributes'] as Map<String, dynamic>?;
+    final src = attrs ?? json;
     return ChapterResponseDto(
-      id: json['id'] as int,
-      projectId: json['project_id'] as int,
-      name: json['name'] as String,
-      content: json['content'] as String?,
-      createdAt: DateTime.parse(json['created_at'] as String),
+      id: int.parse(src['id'].toString()),
+      projectId: int.parse(src['project_id'].toString()),
+      name: src['name'] as String,
+      content: src['content'] as String?,
+      createdAt: DateTime.parse(src['created_at'] as String),
     );
   }
 

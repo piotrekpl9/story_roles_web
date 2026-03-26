@@ -17,6 +17,12 @@ class _Endpoints {
   String renameTrack(int trackId) => '/api/v1/tracks/$trackId';
   String deleteTrack(int trackId) => '/api/v1/tracks/$trackId';
   final String getAudioProgresses = '/api/v1/audio_progresses';
+  final String getProjects = '/api/v1/projects';
+  String projectById(int projectId) => '/api/v1/projects/$projectId';
+  String getChapters(int projectId) => '/api/v1/projects/$projectId/chapters';
+  String chapterById(int chapterId) => '/api/v1/chapters/$chapterId';
+  String generateChapterTracks(int chapterId) =>
+      '/api/v1/chapters/$chapterId/generate_tracks';
 }
 
 class _ApiParameters {

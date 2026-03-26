@@ -20,21 +20,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required Register register,
     required Logout logout,
     required StorageDataSource storage,
-  })  : _logout = logout,
-        _login = login,
-        _register = register,
-        _storage = storage,
-        super(const AuthState(status: AuthStatus.unknown)) {
+  }) : _logout = logout,
+       _login = login,
+       _register = register,
+       _storage = storage,
+       super(const AuthState(status: AuthStatus.unknown)) {
     on<AppStarted>(_onAppStarted);
     on<LoginClicked>(_onLoginRequested);
     on<RegisterClicked>(_onRegisterRequested);
     on<LogoutClicked>(_onLogoutRequested);
   }
 
-  Future<void> _onAppStarted(
-    AppStarted event,
-    Emitter<AuthState> emit,
-  ) async {
+  Future<void> _onAppStarted(AppStarted event, Emitter<AuthState> emit) async {
     final token = await _storage.readToken();
     if (token == null) {
       emit(state.copyWith(status: AuthStatus.unauthenticated));
@@ -43,11 +40,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final userData = await _storage.readUserData();
     final email = userData['email'];
     final createdAtStr = userData['created_at'];
-    emit(state.copyWith(
-      status: AuthStatus.authenticated,
-      email: email,
-      createdAt: createdAtStr != null ? DateTime.tryParse(createdAtStr) : null,
-    ));
+    emit(
+      state.copyWith(
+        status: AuthStatus.authenticated,
+        email: email,
+        createdAt:
+            createdAtStr != null ? DateTime.tryParse(createdAtStr) : null,
+      ),
+    );
   }
 
   Future<void> _onLoginRequested(
@@ -70,12 +70,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           ),
         );
       },
-      onError: (_) => emit(
-        state.copyWith(
-          status: AuthStatus.unauthenticated,
-          errorMessage: 'Login failed',
-        ),
-      ),
+      onError:
+          (_) => emit(
+            state.copyWith(
+              status: AuthStatus.unauthenticated,
+              errorMessage: 'Login failed',
+            ),
+          ),
     );
   }
 
@@ -95,12 +96,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(state.copyWith(status: AuthStatus.registered));
         emit(state.copyWith(status: AuthStatus.unauthenticated));
       },
-      onError: (_) => emit(
-        state.copyWith(
-          status: AuthStatus.unauthenticated,
-          errorMessage: 'Registration failed',
-        ),
-      ),
+      onError:
+          (_) => emit(
+            state.copyWith(
+              status: AuthStatus.unauthenticated,
+              errorMessage: 'Registration failed',
+            ),
+          ),
     );
   }
 
