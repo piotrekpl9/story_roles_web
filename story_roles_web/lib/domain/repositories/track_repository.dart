@@ -6,6 +6,7 @@ import 'package:story_roles_web/domain/entities/track_progress.dart';
 
 abstract class TrackRepository {
   Future<List<Track>> getAll({bool forceRefresh = false});
+  Future<List<Track>> getByChapter(int chapterId);
   Future<Result> uploadTrack({
     required String title,
     required Uint8List bytes,

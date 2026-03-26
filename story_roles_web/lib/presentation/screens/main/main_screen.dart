@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:story_roles_web/core/injector.dart';
+import 'package:story_roles_web/domain/repositories/project_repository.dart';
 import 'package:story_roles_web/presentation/player/persistent_player_bar.dart';
-import 'package:story_roles_web/domain/entities/player_state.dart';
 import 'package:story_roles_web/presentation/player/bloc/player_bloc.dart';
 import 'package:story_roles_web/presentation/player/bloc/player_bloc_state.dart';
-import 'package:story_roles_web/presentation/player/bloc/player_event.dart';
 import 'package:story_roles_web/presentation/screens/home/bloc/home_bloc.dart';
 import 'package:story_roles_web/presentation/screens/home/home_view.dart';
+import 'package:story_roles_web/domain/repositories/company_repository.dart';
+import 'package:story_roles_web/presentation/screens/organisation/bloc/organisation_bloc.dart';
+import 'package:story_roles_web/presentation/screens/organisation/organisation_screen.dart';
 import 'package:story_roles_web/presentation/screens/profile/profile_screen.dart';
-import 'package:story_roles_web/presentation/screens/track_upload/bloc/track_upload_bloc.dart';
-import 'package:story_roles_web/presentation/screens/track_upload/track_upload_view.dart';
+import 'package:story_roles_web/presentation/screens/script/script_view.dart';
 import 'package:story_roles_web/presentation/utils/app_config/app_colors.dart';
 import 'package:story_roles_web/presentation/widgets/sidebar.dart';
 
@@ -23,7 +24,6 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
-  HomeBloc? _homeBloc;
 
   @override
   Widget build(BuildContext context) {
@@ -46,51 +46,49 @@ class _MainScreenState extends State<MainScreen> {
                   child: IndexedStack(
                     index: _selectedIndex,
                     children: [
-                      // Home
+                      // Home – project list
                       BlocProvider(
-                        create: (ctx) {
-                          _homeBloc = HomeBloc(
-                            trackRepository: Injector().resolve(),
-                          )..add(LoadHomeEvent());
-                          return _homeBloc!;
-                        },
-                        child: BlocListener<PlayerBloc, PlayerBlocState>(
-                          listenWhen: (prev, curr) =>
-                              (prev.playerState.status !=
-                                      curr.playerState.status &&
-                                  curr.playerState.status ==
-                                      PlaybackStatus.completed) ||
-                              (prev.currentTrack?.id != curr.currentTrack?.id &&
-                                  prev.currentTrack != null),
-                          listener: (ctx, _) {
-                            Future.delayed(const Duration(seconds: 2), () {
-                              _homeBloc?.add(RefreshProgressesEvent());
-                            });
-                          },
-                          child: HomeView(
-                            onTrackSelected: (track) =>
-                                context.read<PlayerBloc>().add(PlayTrackEvent(track)),
-                          ),
-                        ),
+                        create: (_) => HomeBloc(
+                          projectRepository: Injector().resolve<ProjectRepository>(),
+                        )..add(LoadHomeEvent()),
+                        child: const HomeView(),
                       ),
 
-                      // Upload
+                      // Organisation
                       BlocProvider(
-                        create: (_) => TrackUploadBloc(
-                          uploadTrack: Injector().resolve(),
-                        ),
-                        child: TrackUploadView(
-                          onUploadSuccess: () {
-                            setState(() => _selectedIndex = 0);
-                            _homeBloc?.add(RefreshTracksAfterUpload());
-                          },
-                        ),
+                        create: (_) => OrganisationBloc(
+                          companyRepository: Injector().resolve<CompanyRepository>(),
+                        )..add(const LoadOrganisationEvent()),
+                        child: const OrganisationScreen(),
                       ),
 
                       // Profile
                       const ProfileScreen(),
                     ],
                   ),
+                ),
+
+                // ── Script panel (right) ──────────────────────────────
+                BlocBuilder<PlayerBloc, PlayerBlocState>(
+                  builder: (context, state) {
+                    return AnimatedSize(
+                      duration: const Duration(milliseconds: 250),
+                      curve: Curves.easeInOut,
+                      child: state.hasTrack
+                          ? Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(width: 1, color: AppColors.divider),
+                                Container(
+                                  width: 300,
+                                  color: AppColors.sidebar,
+                                  child: const ScriptView(),
+                                ),
+                              ],
+                            )
+                          : const SizedBox.shrink(),
+                    );
+                  },
                 ),
               ],
             ),

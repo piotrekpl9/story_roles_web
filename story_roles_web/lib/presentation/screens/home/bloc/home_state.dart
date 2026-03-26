@@ -4,28 +4,23 @@ enum HomeBlocStatus { initial, loading, success, failure }
 
 class HomeState extends Equatable {
   final HomeBlocStatus status;
-  final List<Track> tracks;
-  final Map<int, TrackProgress> audioProgresses;
+  final List<Project> projects;
 
   HomeState({
     required this.status,
-    List<Track>? tracks,
-    Map<int, TrackProgress>? audioProgresses,
-  })  : tracks = tracks ?? [],
-        audioProgresses = audioProgresses ?? {};
+    List<Project>? projects,
+  }) : projects = projects ?? [];
 
   HomeState copyWith({
     HomeBlocStatus? status,
-    List<Track>? tracks,
-    Map<int, TrackProgress>? audioProgresses,
+    List<Project>? projects,
   }) {
     return HomeState(
       status: status ?? this.status,
-      tracks: tracks ?? this.tracks,
-      audioProgresses: audioProgresses ?? this.audioProgresses,
+      projects: projects ?? this.projects,
     );
   }
 
   @override
-  List<Object> get props => [status, tracks, audioProgresses];
+  List<Object> get props => [status, projects];
 }

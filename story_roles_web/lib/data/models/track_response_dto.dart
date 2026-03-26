@@ -3,9 +3,10 @@ import 'package:story_roles_web/domain/entities/track.dart';
 
 class TrackResponseDto {
   final int id;
+  final int? chapterId;
   final AttributesResponseDto attributesResponseDto;
 
-  TrackResponseDto({required this.id, required this.attributesResponseDto});
+  TrackResponseDto({required this.id, this.chapterId, required this.attributesResponseDto});
 
   factory TrackResponseDto.fromJson(Map<String, dynamic> json) {
     return TrackResponseDto(
@@ -17,6 +18,6 @@ class TrackResponseDto {
   }
 
   Track toDomain() {
-    return Track(id: id, attributes: attributesResponseDto.toDomain());
+    return Track(id: id, chapterId: chapterId, attributes: attributesResponseDto.toDomain());
   }
 }

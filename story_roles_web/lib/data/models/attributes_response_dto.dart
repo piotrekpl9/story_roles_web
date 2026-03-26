@@ -32,6 +32,15 @@ class AttributesResponseDto {
     }
   }
 
+  AttributesResponseDto copyWith({String? title}) {
+    return AttributesResponseDto(
+      title: title ?? this.title,
+      imageUrl: imageUrl,
+      createdAt: createdAt,
+      status: status,
+    );
+  }
+
   Attributes toDomain() {
     return Attributes(
       title: title,

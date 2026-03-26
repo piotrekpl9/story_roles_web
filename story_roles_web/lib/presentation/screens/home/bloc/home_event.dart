@@ -11,23 +11,27 @@ class LoadHomeEvent extends HomeEvent {}
 
 class SilentPoolTracksEvent extends HomeEvent {}
 
-class RefreshTracksAfterUpload extends HomeEvent {}
-
-class RefreshProgressesEvent extends HomeEvent {}
-
-class RenameTrackEvent extends HomeEvent {
-  final int trackId;
-  final String newTitle;
-  const RenameTrackEvent({required this.trackId, required this.newTitle});
+class RenameProjectEvent extends HomeEvent {
+  final int projectId;
+  final String newName;
+  const RenameProjectEvent({required this.projectId, required this.newName});
 
   @override
-  List<Object> get props => [trackId, newTitle];
+  List<Object> get props => [projectId, newName];
 }
 
-class DeleteTrackEvent extends HomeEvent {
-  final int trackId;
-  const DeleteTrackEvent({required this.trackId});
+class DeleteProjectEvent extends HomeEvent {
+  final int projectId;
+  const DeleteProjectEvent({required this.projectId});
 
   @override
-  List<Object> get props => [trackId];
+  List<Object> get props => [projectId];
+}
+
+class CreateProjectEvent extends HomeEvent {
+  final String name;
+  const CreateProjectEvent({required this.name});
+
+  @override
+  List<Object> get props => [name];
 }

@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:story_roles_web/core/injector.dart';
-import 'package:story_roles_web/presentation/player/bloc/player_bloc.dart';
-import 'package:story_roles_web/presentation/player/bloc/player_event.dart';
+import 'package:story_roles_web/domain/entities/project.dart';
+import 'package:story_roles_web/domain/repositories/chapter_repository.dart';
+import 'package:story_roles_web/domain/repositories/project_repository.dart';
+import 'package:story_roles_web/domain/repositories/track_repository.dart';
 import 'package:story_roles_web/presentation/screens/auth/bloc/auth_bloc.dart';
 import 'package:story_roles_web/presentation/screens/auth/login_screen.dart';
 import 'package:story_roles_web/presentation/screens/auth/register_screen.dart';
@@ -13,8 +15,11 @@ import 'package:story_roles_web/presentation/screens/home/bloc/home_bloc.dart';
 import 'package:story_roles_web/presentation/screens/home/home_view.dart';
 import 'package:story_roles_web/presentation/screens/main/main_shell.dart';
 import 'package:story_roles_web/presentation/screens/profile/profile_screen.dart';
-import 'package:story_roles_web/presentation/screens/track_upload/bloc/track_upload_bloc.dart';
-import 'package:story_roles_web/presentation/screens/track_upload/track_upload_view.dart';
+import 'package:story_roles_web/presentation/screens/project/bloc/project_bloc.dart';
+import 'package:story_roles_web/presentation/screens/project/project_screen.dart';
+import 'package:story_roles_web/domain/repositories/company_repository.dart';
+import 'package:story_roles_web/presentation/screens/organisation/bloc/organisation_bloc.dart';
+import 'package:story_roles_web/presentation/screens/organisation/organisation_screen.dart';
 
 GoRouter buildRouter(AuthBloc authBloc) {
   return GoRouter(
@@ -48,28 +53,42 @@ GoRouter buildRouter(AuthBloc authBloc) {
               path: '/home',
               pageBuilder: (context, state) => NoTransitionPage(
                 child: BlocProvider(
-                  create: (ctx) => HomeBloc(
-                    trackRepository: Injector().resolve(),
+                  create: (_) => HomeBloc(
+                    projectRepository: Injector().resolve<ProjectRepository>(),
                   )..add(LoadHomeEvent()),
-                  child: HomeView(
-                    onTrackSelected: (track) =>
-                        context.read<PlayerBloc>().add(PlayTrackEvent(track)),
-                  ),
+                  child: const HomeView(),
                 ),
               ),
+              routes: [
+                GoRoute(
+                  path: 'projects/:id',
+                  pageBuilder: (context, state) {
+                    final project = state.extra as Project;
+                    return NoTransitionPage(
+                      child: BlocProvider(
+                        create: (_) => ProjectBloc(
+                          chapterRepository:
+                              Injector().resolve<ChapterRepository>(),
+                          trackRepository:
+                              Injector().resolve<TrackRepository>(),
+                        )..add(LoadProjectEvent(project.id)),
+                        child: ProjectScreen(project: project),
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
           ]),
           StatefulShellBranch(routes: [
             GoRoute(
-              path: '/upload',
+              path: '/organisation',
               pageBuilder: (context, state) => NoTransitionPage(
                 child: BlocProvider(
-                  create: (_) => TrackUploadBloc(
-                    uploadTrack: Injector().resolve(),
-                  ),
-                  child: TrackUploadView(
-                    onUploadSuccess: () => context.go('/home'),
-                  ),
+                  create: (_) => OrganisationBloc(
+                    companyRepository: Injector().resolve<CompanyRepository>(),
+                  )..add(const LoadOrganisationEvent()),
+                  child: const OrganisationScreen(),
                 ),
               ),
             ),

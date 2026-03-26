@@ -19,10 +19,19 @@ class TrackWebApiImpl implements TrackWebApi {
   }
 
   @override
+  Future<List<TrackResponseDto>> getByChapter(int chapterId) async {
+    // TODO: replace with real endpoint when backend supports it
+    final all = await getAll();
+    return all.where((t) => t.chapterId == chapterId).toList();
+  }
+
+  @override
   Future<void> rename(int trackId, String newTitle) async {
     await dio.patch(
       DataConsts.endpoints.renameTrack(trackId),
-      data: {'track': {'title': newTitle}},
+      data: {
+        'track': {'title': newTitle},
+      },
     );
   }
 

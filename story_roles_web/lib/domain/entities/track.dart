@@ -4,7 +4,8 @@ enum TrackStatus { completed, pending }
 
 class Track {
   final int id;
+  final int? chapterId;
   final Attributes attributes;
 
-  Track({required this.id, required this.attributes});
+  Track({required this.id, this.chapterId, required this.attributes});
 }

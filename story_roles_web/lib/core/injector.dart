@@ -3,20 +3,32 @@ import 'package:get_it/get_it.dart';
 import 'package:story_roles_web/core/consts.dart';
 import 'package:story_roles_web/data/core/token_interceptor.dart';
 import 'package:story_roles_web/data/datasources/abstractions/auth_web_api.dart';
+import 'package:story_roles_web/data/datasources/abstractions/chapter_web_api.dart';
+import 'package:story_roles_web/data/datasources/abstractions/company_web_api.dart';
+import 'package:story_roles_web/data/datasources/abstractions/project_web_api.dart';
 import 'package:story_roles_web/data/datasources/abstractions/storage_data_source.dart';
 import 'package:story_roles_web/data/datasources/abstractions/track_upload_web_api.dart';
 import 'package:story_roles_web/data/datasources/abstractions/track_web_api.dart';
 import 'package:story_roles_web/data/datasources/auth_web_api_impl.dart';
+import 'package:story_roles_web/data/datasources/chapter_web_api_impl.dart';
+import 'package:story_roles_web/data/datasources/company_web_api_impl.dart';
+import 'package:story_roles_web/data/datasources/project_web_api_impl.dart';
 import 'package:story_roles_web/data/datasources/storage_data_source_impl.dart';
 import 'package:story_roles_web/data/datasources/track_upload_web_api_impl.dart';
 import 'package:story_roles_web/data/datasources/track_web_api_impl.dart';
 import 'package:story_roles_web/data/repositories/auth_repository_impl.dart';
+import 'package:story_roles_web/data/repositories/chapter_repository_impl.dart';
+import 'package:story_roles_web/data/repositories/company_repository_impl.dart';
+import 'package:story_roles_web/data/repositories/project_repository_impl.dart';
 import 'package:story_roles_web/data/repositories/track_repository_impl.dart';
 import 'package:story_roles_web/data/usecases/auth/login.dart';
 import 'package:story_roles_web/data/usecases/auth/logout.dart';
 import 'package:story_roles_web/data/usecases/auth/register.dart';
 import 'package:story_roles_web/data/usecases/track/upload_track.dart';
 import 'package:story_roles_web/domain/repositories/auth_repository.dart';
+import 'package:story_roles_web/domain/repositories/chapter_repository.dart';
+import 'package:story_roles_web/domain/repositories/company_repository.dart';
+import 'package:story_roles_web/domain/repositories/project_repository.dart';
 import 'package:story_roles_web/domain/repositories/track_repository.dart';
 import 'package:story_roles_web/presentation/screens/auth/bloc/auth_bloc.dart';
 
@@ -72,15 +84,13 @@ class Injector {
   }
 
   void _initData() {
-    _getIt.registerLazySingleton<AuthWebApi>(
-      () => AuthWebApiImpl(dio: _getIt()),
-    );
-    _getIt.registerLazySingleton<TrackWebApi>(
-      () => TrackWebApiImpl(dio: _getIt()),
-    );
-    _getIt.registerLazySingleton<TrackUploadWebApi>(
-      () => TrackUploadWebApiImpl(dio: _getIt()),
-    );
+    _getIt.registerLazySingleton<AuthWebApi>(() => AuthWebApiImpl(dio: _getIt()));
+    _getIt.registerLazySingleton<TrackWebApi>(() => TrackWebApiImpl(dio: _getIt()));
+    _getIt.registerLazySingleton<TrackUploadWebApi>(() => TrackUploadWebApiImpl(dio: _getIt()));
+    _getIt.registerLazySingleton<CompanyWebApi>(() => CompanyWebApiImpl(dio: _getIt()));
+    _getIt.registerLazySingleton<ProjectWebApi>(() => ProjectWebApiImpl(dio: _getIt()));
+    _getIt.registerLazySingleton<ChapterWebApi>(() => ChapterWebApiImpl(dio: _getIt()));
+
     _getIt.registerLazySingleton<AuthRepository>(
       () => AuthRepositoryImpl(
         webApi: _getIt(),
@@ -92,6 +102,15 @@ class Injector {
         trackWebApi: _getIt(),
         trackUploadWebApi: _getIt(),
       ),
+    );
+    _getIt.registerLazySingleton<CompanyRepository>(
+      () => CompanyRepositoryImpl(companyWebApi: _getIt()),
+    );
+    _getIt.registerLazySingleton<ProjectRepository>(
+      () => ProjectRepositoryImpl(projectWebApi: _getIt()),
+    );
+    _getIt.registerLazySingleton<ChapterRepository>(
+      () => ChapterRepositoryImpl(chapterWebApi: _getIt()),
     );
   }
 }

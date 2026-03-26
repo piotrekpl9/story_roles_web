@@ -24,6 +24,12 @@ class TrackRepositoryImpl implements TrackRepository {
   }
 
   @override
+  Future<List<Track>> getByChapter(int chapterId) async {
+    final dtos = await trackWebApi.getByChapter(chapterId);
+    return dtos.map((e) => e.toDomain()).toList();
+  }
+
+  @override
   Future<Result> uploadTrack({
     required String title,
     required Uint8List bytes,

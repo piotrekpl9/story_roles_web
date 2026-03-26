@@ -30,8 +30,8 @@ class Sidebar extends StatelessWidget {
             onTap: () => onSelect(0),
           ),
           SidebarItem(
-            icon: Icons.add_circle_outline_rounded,
-            label: 'Upload',
+            icon: Icons.business_outlined,
+            label: 'Organisation',
             isSelected: selectedIndex == 1,
             onTap: () => onSelect(1),
           ),

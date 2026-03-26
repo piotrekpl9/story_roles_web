@@ -1,7 +1,7 @@
 const http = require('http');
 const httpProxy = require('http-proxy');
 
-const TARGET = 'https://storyroles.com';
+const TARGET = 'https://api.storyroles.com';
 const PORT = 8080;
 
 const proxy = httpProxy.createProxyServer({

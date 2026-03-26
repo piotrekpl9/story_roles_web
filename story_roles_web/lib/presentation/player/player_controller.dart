@@ -12,6 +12,8 @@ class PlayerController {
   Duration? _duration;
   bool _disposed = false;
 
+  DateTime _lastPositionEmit = DateTime.fromMillisecondsSinceEpoch(0);
+
   PlayerController() {
     _player.onDurationChanged.listen((d) {
       _duration = d;
@@ -19,7 +21,11 @@ class PlayerController {
     });
     _player.onPositionChanged.listen((p) {
       _position = p;
-      _emitState();
+      final now = DateTime.now();
+      if (now.difference(_lastPositionEmit).inMilliseconds >= 500) {
+        _lastPositionEmit = now;
+        _emitState();
+      }
     });
     _player.onPlayerStateChanged.listen((_) {
       _emitState();

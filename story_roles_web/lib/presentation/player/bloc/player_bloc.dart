@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:story_roles_web/core/consts.dart';
 import 'package:story_roles_web/data/utils/data_consts.dart';
@@ -52,18 +52,25 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerBlocState> {
 
     try {
       final token = await _storageDataSource.readToken() ?? '';
-      final audioUrl =
-          '${CoreConsts.baseUrl}api/v1/tracks/${event.track.id}/file';
+      final isMock = token.startsWith('mock-token');
 
-      final response = await _dio.get<List<int>>(
-        audioUrl,
-        options: Options(
-          headers: {'Authorization': 'Bearer $token'},
-          responseType: ResponseType.bytes,
-        ),
-      );
+      final Uint8List bytes;
+      if (isMock) {
+        final data = await rootBundle.load('assets/audio/mock_sample.wav');
+        bytes = data.buffer.asUint8List();
+      } else {
+        final audioUrl =
+            '${CoreConsts.baseUrl}api/v1/tracks/${event.track.id}/file';
+        final response = await _dio.get<List<int>>(
+          audioUrl,
+          options: Options(
+            headers: {'Authorization': 'Bearer $token'},
+            responseType: ResponseType.bytes,
+          ),
+        );
+        bytes = Uint8List.fromList(response.data!);
+      }
 
-      final bytes = Uint8List.fromList(response.data!);
       await _controller!.loadFromBytes(bytes);
 
       final savedPosition = await _fetchSavedProgress(event.track.id);

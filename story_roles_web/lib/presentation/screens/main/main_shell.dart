@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:story_roles_web/presentation/player/bloc/player_bloc.dart';
+import 'package:story_roles_web/presentation/player/bloc/player_bloc_state.dart';
 import 'package:story_roles_web/presentation/player/persistent_player_bar.dart';
+import 'package:story_roles_web/presentation/screens/script/script_view.dart';
 import 'package:story_roles_web/presentation/utils/app_config/app_colors.dart';
 import 'package:story_roles_web/presentation/widgets/sidebar.dart';
 
@@ -27,6 +31,22 @@ class MainShell extends StatelessWidget {
                 ),
                 Container(width: 1, color: AppColors.divider),
                 Expanded(child: shell),
+                BlocBuilder<PlayerBloc, PlayerBlocState>(
+                  builder: (context, state) {
+                    if (!state.hasTrack) return const SizedBox.shrink();
+                    return Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(width: 1, color: AppColors.divider),
+                        Container(
+                          width: 300,
+                          color: AppColors.sidebar,
+                          child: const ScriptView(),
+                        ),
+                      ],
+                    );
+                  },
+                ),
               ],
             ),
           ),
