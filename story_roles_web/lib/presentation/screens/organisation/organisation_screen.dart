@@ -31,8 +31,7 @@ class OrganisationScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
                 TextButton(
-                  onPressed:
-                      () => context.read<OrganisationBloc>().add(
+                  onPressed: () => context.read<OrganisationBloc>().add(
                         const LoadOrganisationEvent(),
                       ),
                   child: const Text('Retry'),
@@ -118,19 +117,17 @@ class OrganisationScreen extends StatelessWidget {
                                   vertical: 4,
                                 ),
                                 decoration: BoxDecoration(
-                                  color:
-                                      company.active
-                                          ? Colors.green.withValues(alpha: 0.12)
-                                          : Colors.red.withValues(alpha: 0.12),
+                                  color: company.active
+                                      ? Colors.green.withValues(alpha: 0.12)
+                                      : Colors.red.withValues(alpha: 0.12),
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                                 child: Text(
                                   company.active ? 'Active' : 'Inactive',
                                   style: TextStyle(
-                                    color:
-                                        company.active
-                                            ? Colors.green
-                                            : Colors.red,
+                                    color: company.active
+                                        ? Colors.green
+                                        : Colors.red,
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -171,12 +168,11 @@ class OrganisationScreen extends StatelessWidget {
                 ),
               ),
             ),
-
             SliverPadding(
               padding: const EdgeInsets.fromLTRB(28, 0, 28, 40),
               sliver: SliverList.separated(
-                separatorBuilder:
-                    (_, _) => Container(height: 1, color: AppColors.divider),
+                separatorBuilder: (_, __) =>
+                    Container(height: 1, color: AppColors.divider),
                 itemCount: state.users.length,
                 itemBuilder: (ctx, i) => UserRow(user: state.users[i]),
               ),

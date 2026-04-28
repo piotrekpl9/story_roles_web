@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:story_roles_web/core/injector.dart';
 import 'package:story_roles_web/domain/entities/project.dart';
 import 'package:story_roles_web/domain/repositories/chapter_repository.dart';
+import 'package:story_roles_web/domain/repositories/lector_voice_repository.dart';
 import 'package:story_roles_web/domain/repositories/project_repository.dart';
 import 'package:story_roles_web/domain/repositories/track_repository.dart';
 import 'package:story_roles_web/presentation/screens/auth/bloc/auth_bloc.dart';
@@ -64,15 +65,21 @@ GoRouter buildRouter(AuthBloc authBloc) {
                   path: 'projects/:id',
                   pageBuilder: (context, state) {
                     final project = state.extra as Project;
+                    final lectorVoiceRepo =
+                        Injector().resolve<LectorVoiceRepository>();
                     return NoTransitionPage(
-                      child: BlocProvider(
-                        create: (_) => ProjectBloc(
-                          chapterRepository:
-                              Injector().resolve<ChapterRepository>(),
-                          trackRepository:
-                              Injector().resolve<TrackRepository>(),
-                        )..add(LoadProjectEvent(project.id)),
-                        child: ProjectScreen(project: project),
+                      child: RepositoryProvider<LectorVoiceRepository>.value(
+                        value: lectorVoiceRepo,
+                        child: BlocProvider(
+                          create: (_) => ProjectBloc(
+                            chapterRepository:
+                                Injector().resolve<ChapterRepository>(),
+                            trackRepository:
+                                Injector().resolve<TrackRepository>(),
+                            lectorVoiceRepository: lectorVoiceRepo,
+                          )..add(LoadProjectEvent(project.id)),
+                          child: ProjectScreen(project: project),
+                        ),
                       ),
                     );
                   },

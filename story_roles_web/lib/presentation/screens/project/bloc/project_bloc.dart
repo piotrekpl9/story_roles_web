@@ -3,8 +3,10 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:story_roles_web/core/utils/result.dart';
 import 'package:story_roles_web/domain/entities/chapter.dart';
+import 'package:story_roles_web/domain/entities/lector_voice.dart';
 import 'package:story_roles_web/domain/entities/track.dart';
 import 'package:story_roles_web/domain/repositories/chapter_repository.dart';
+import 'package:story_roles_web/domain/repositories/lector_voice_repository.dart';
 import 'package:story_roles_web/domain/repositories/track_repository.dart';
 
 part 'project_event.dart';
@@ -13,12 +15,15 @@ part 'project_state.dart';
 class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
   final ChapterRepository _chapterRepository;
   final TrackRepository _trackRepository;
+  final LectorVoiceRepository _lectorVoiceRepository;
 
   ProjectBloc({
     required ChapterRepository chapterRepository,
     required TrackRepository trackRepository,
+    required LectorVoiceRepository lectorVoiceRepository,
   })  : _chapterRepository = chapterRepository,
         _trackRepository = trackRepository,
+        _lectorVoiceRepository = lectorVoiceRepository,
         super(const ProjectState()) {
     on<LoadProjectEvent>(_onLoad);
     on<CreateChapterEvent>(_onCreateChapter);
@@ -29,12 +34,15 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
     on<GenerateTracksEvent>(_onGenerateTracks);
   }
 
-  Future<void> _onLoad(LoadProjectEvent event, Emitter<ProjectState> emit) async {
+  Future<void> _onLoad(
+      LoadProjectEvent event, Emitter<ProjectState> emit) async {
     emit(state.copyWith(status: ProjectStatus.loading));
     try {
-      final chapters = await _chapterRepository.getAll(event.projectId);
+      final chaptersF = _chapterRepository.getAll(event.projectId);
+      final voicesF = _lectorVoiceRepository.getAll();
+      final chapters = await chaptersF;
+      final lectorVoices = await voicesF;
 
-      // Load tracks for every chapter in parallel
       final tracksByChapter = <int, List<Track>>{};
       await Future.wait(chapters.map((c) async {
         final tracks = await _trackRepository.getByChapter(c.id);
@@ -45,6 +53,7 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
         status: ProjectStatus.success,
         chapters: chapters,
         tracksByChapter: tracksByChapter,
+        lectorVoices: lectorVoices,
       ));
     } catch (e, st) {
       debugPrint('ProjectBloc error: $e\n$st');
@@ -80,7 +89,8 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
         state.chapters.where((c) => c.id != event.chapterId).toList();
     final updatedTracks = Map.of(state.tracksByChapter)
       ..remove(event.chapterId);
-    emit(state.copyWith(chapters: updatedChapters, tracksByChapter: updatedTracks));
+    emit(state.copyWith(
+        chapters: updatedChapters, tracksByChapter: updatedTracks));
   }
 
   Future<void> _onCreateChapter(
@@ -91,6 +101,8 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
       projectId: event.projectId,
       name: event.name,
       content: event.content,
+      bytes: event.bytes,
+      fileName: event.fileName,
     );
     if (result.isSuccess) {
       final chapter = result.dataOrNull!;
@@ -126,10 +138,9 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
   ) async {
     await _trackRepository.deleteTrack(event.trackId);
     final updatedTracks = Map.of(state.tracksByChapter);
-    updatedTracks[event.chapterId] =
-        (updatedTracks[event.chapterId] ?? [])
-            .where((t) => t.id != event.trackId)
-            .toList();
+    updatedTracks[event.chapterId] = (updatedTracks[event.chapterId] ?? [])
+        .where((t) => t.id != event.trackId)
+        .toList();
     emit(state.copyWith(tracksByChapter: updatedTracks));
   }
 
@@ -142,7 +153,7 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
       generatingChapterIds: {...state.generatingChapterIds, event.chapterId},
     ));
 
-    await _chapterRepository.generateTracks(event.chapterId, event.narratorId);
+    await _chapterRepository.generateTracks(event.projectId, event.chapterId, event.lectorVoice);
 
     // Reload tracks for this chapter and unmark generating
     final tracks = await _trackRepository.getByChapter(event.chapterId);

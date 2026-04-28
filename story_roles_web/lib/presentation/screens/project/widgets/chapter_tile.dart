@@ -1,9 +1,14 @@
+import 'dart:typed_data';
+
+import 'package:audioplayers/audioplayers.dart' as ap;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:story_roles_web/core/utils/date_helper.dart';
 import 'package:story_roles_web/domain/entities/chapter.dart';
+import 'package:story_roles_web/domain/entities/lector_voice.dart';
 import 'package:story_roles_web/domain/entities/track.dart';
+import 'package:story_roles_web/domain/repositories/lector_voice_repository.dart';
 import 'package:story_roles_web/presentation/screens/project/bloc/project_bloc.dart';
 import 'package:story_roles_web/presentation/screens/project/widgets/track_row.dart';
 import 'package:story_roles_web/presentation/utils/app_config/app_colors.dart';
@@ -35,13 +40,6 @@ class _ChapterTileState extends State<ChapterTile> {
   bool _showContent = false;
   bool _hovered = false;
 
-  static const _narrators = [
-    ('Andrzej', Icons.person_outline),
-    ('Maria', Icons.person_outline),
-    ('Tomasz', Icons.person_outline),
-    ('Krzysztof', Icons.person_outline),
-  ];
-
   Future<void> _pickNewFile(BuildContext context) async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
@@ -61,47 +59,16 @@ class _ChapterTileState extends State<ChapterTile> {
   }
 
   Future<void> _showNarratorDialog(BuildContext context) async {
+    final bloc = context.read<ProjectBloc>();
+    final voices = bloc.state.lectorVoices;
+    final repo = context.read<LectorVoiceRepository>();
     final selected = await showDialog<String>(
       context: context,
-      builder:
-          (ctx) => SimpleDialog(
-            backgroundColor: AppColors.card,
-            title: const Text(
-              'Choose narrator',
-              style: TextStyle(color: Colors.white, fontSize: 16),
-            ),
-            children:
-                _narrators
-                    .map(
-                      (n) => SimpleDialogOption(
-                        onPressed: () => Navigator.of(ctx).pop(n.$1),
-                        child: Row(
-                          children: [
-                            Icon(
-                              n.$2,
-                              size: 20,
-                              color: AppColors.onBackground.withValues(
-                                alpha: 0.6,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Text(
-                              n.$1,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    )
-                    .toList(),
-          ),
+      builder: (ctx) => _NarratorDialog(voices: voices, repository: repo),
     );
     if (selected != null && context.mounted) {
-      context.read<ProjectBloc>().add(
-        GenerateTracksEvent(widget.chapter.id, selected),
+      bloc.add(
+        GenerateTracksEvent(widget.chapter.projectId, widget.chapter.id, selected),
       );
     }
   }
@@ -416,6 +383,120 @@ class _ChapterTileState extends State<ChapterTile> {
                     ),
           ),
       ],
+    );
+  }
+}
+
+class _NarratorDialog extends StatefulWidget {
+  final List<LectorVoice> voices;
+  final LectorVoiceRepository repository;
+
+  const _NarratorDialog({required this.voices, required this.repository});
+
+  @override
+  State<_NarratorDialog> createState() => _NarratorDialogState();
+}
+
+class _NarratorDialogState extends State<_NarratorDialog> {
+  final ap.AudioPlayer _player = ap.AudioPlayer();
+  String? _playingId;
+  bool _loading = false;
+
+  @override
+  void dispose() {
+    _player.dispose();
+    super.dispose();
+  }
+
+  Future<void> _toggleSample(String id) async {
+    if (_playingId == id) {
+      await _player.stop();
+      setState(() => _playingId = null);
+      return;
+    }
+    setState(() {
+      _playingId = id;
+      _loading = true;
+    });
+    try {
+      final bytes = await widget.repository.getSample(id);
+      await _player.stop();
+      await _player.setSourceBytes(bytes);
+      await _player.resume();
+      _player.onPlayerComplete.first.then((_) {
+        if (mounted && _playingId == id) setState(() => _playingId = null);
+      });
+    } catch (_) {
+      // ignore sample errors
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SimpleDialog(
+      backgroundColor: AppColors.card,
+      title: const Text(
+        'Choose narrator',
+        style: TextStyle(color: Colors.white, fontSize: 16),
+      ),
+      children: widget.voices.map((v) {
+        final isPlaying = _playingId == v.id;
+        final isLoadingThis = _loading && _playingId == v.id;
+        return SimpleDialogOption(
+          onPressed: () => Navigator.of(context).pop(v.id),
+          child: Row(
+            children: [
+              Icon(
+                Icons.person_outline,
+                size: 20,
+                color: AppColors.onBackground.withValues(alpha: 0.6),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      v.name,
+                      style: const TextStyle(color: Colors.white, fontSize: 14),
+                    ),
+                    if (v.description.isNotEmpty)
+                      Text(
+                        v.description,
+                        style: TextStyle(
+                          color: AppColors.onBackground.withValues(alpha: 0.45),
+                          fontSize: 11,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              GestureDetector(
+                onTap: () => _toggleSample(v.id),
+                child: Padding(
+                  padding: const EdgeInsets.all(4),
+                  child: isLoadingThis
+                      ? SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: AppColors.primary,
+                          ),
+                        )
+                      : Icon(
+                          isPlaying ? Icons.stop : Icons.play_arrow,
+                          size: 18,
+                          color: AppColors.primary,
+                        ),
+                ),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
     );
   }
 }

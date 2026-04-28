@@ -35,21 +35,26 @@ class DeleteChapterEvent extends ProjectEvent {
 class CreateChapterEvent extends ProjectEvent {
   final int projectId;
   final String name;
+  final Uint8List bytes;
+  final String fileName;
   final String content;
   const CreateChapterEvent({
     required this.projectId,
     required this.name,
     required this.content,
+    required this.bytes,
+    required this.fileName,
   });
 
   @override
-  List<Object> get props => [projectId, name, content];
+  List<Object> get props => [projectId, name, content, bytes, fileName];
 }
 
 class UpdateChapterContentEvent extends ProjectEvent {
   final int chapterId;
   final String content;
-  const UpdateChapterContentEvent({required this.chapterId, required this.content});
+  const UpdateChapterContentEvent(
+      {required this.chapterId, required this.content});
 
   @override
   List<Object> get props => [chapterId, content];
@@ -65,10 +70,11 @@ class DeleteTrackEvent extends ProjectEvent {
 }
 
 class GenerateTracksEvent extends ProjectEvent {
+  final int projectId;
   final int chapterId;
-  final String narratorId;
-  const GenerateTracksEvent(this.chapterId, this.narratorId);
+  final String lectorVoice;
+  const GenerateTracksEvent(this.projectId, this.chapterId, this.lectorVoice);
 
   @override
-  List<Object> get props => [chapterId, narratorId];
+  List<Object> get props => [projectId, chapterId, lectorVoice];
 }

@@ -39,94 +39,92 @@ class _HomeViewState extends State<HomeView> {
     final controller = TextEditingController(text: project.name);
     final confirmed = await showDialog<bool>(
       context: context,
-      builder:
-          (ctx) => AlertDialog(
-            backgroundColor: AppColors.card,
-            title: const Text(
-              'Rename project',
-              style: TextStyle(color: Colors.white),
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.card,
+        title: const Text(
+          'Rename project',
+          style: TextStyle(color: Colors.white),
+        ),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          style: const TextStyle(color: Colors.white),
+          decoration: InputDecoration(
+            hintText: 'Project name',
+            hintStyle: TextStyle(
+              color: AppColors.onBackground.withValues(alpha: 0.4),
             ),
-            content: TextField(
-              controller: controller,
-              autofocus: true,
-              style: const TextStyle(color: Colors.white),
-              decoration: InputDecoration(
-                hintText: 'Project name',
-                hintStyle: TextStyle(
-                  color: AppColors.onBackground.withValues(alpha: 0.4),
-                ),
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: AppColors.divider),
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: AppColors.primary),
-                ),
-              ),
-              onSubmitted: (_) => Navigator.of(ctx).pop(true),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: AppColors.divider),
             ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(ctx).pop(false),
-                child: const Text(
-                  'Cancel',
-                  style: TextStyle(color: Colors.white54),
-                ),
-              ),
-              TextButton(
-                onPressed: () => Navigator.of(ctx).pop(true),
-                child: Text(
-                  'Rename',
-                  style: TextStyle(color: AppColors.primary),
-                ),
-              ),
-            ],
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: AppColors.primary),
+            ),
           ),
+          onSubmitted: (_) => Navigator.of(ctx).pop(true),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: Colors.white54),
+            ),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: Text(
+              'Rename',
+              style: TextStyle(color: AppColors.primary),
+            ),
+          ),
+        ],
+      ),
     );
     if (confirmed == true &&
         controller.text.trim().isNotEmpty &&
         context.mounted) {
       context.read<HomeBloc>().add(
-        RenameProjectEvent(
-          projectId: project.id,
-          newName: controller.text.trim(),
-        ),
-      );
+            RenameProjectEvent(
+              projectId: project.id,
+              newName: controller.text.trim(),
+            ),
+          );
     }
   }
 
   Future<void> _showDeleteDialog(BuildContext context, Project project) async {
     final confirmed = await showDialog<bool>(
       context: context,
-      builder:
-          (ctx) => AlertDialog(
-            backgroundColor: AppColors.card,
-            title: const Text(
-              'Remove project',
-              style: TextStyle(color: Colors.white),
-            ),
-            content: Text(
-              'Are you sure you want to remove "${project.name}"?',
-              style: TextStyle(
-                color: AppColors.onBackground.withValues(alpha: 0.7),
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(ctx).pop(false),
-                child: const Text(
-                  'Cancel',
-                  style: TextStyle(color: Colors.white54),
-                ),
-              ),
-              TextButton(
-                onPressed: () => Navigator.of(ctx).pop(true),
-                child: const Text(
-                  'Remove',
-                  style: TextStyle(color: Colors.redAccent),
-                ),
-              ),
-            ],
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.card,
+        title: const Text(
+          'Remove project',
+          style: TextStyle(color: Colors.white),
+        ),
+        content: Text(
+          'Are you sure you want to remove "${project.name}"?',
+          style: TextStyle(
+            color: AppColors.onBackground.withValues(alpha: 0.7),
           ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: Colors.white54),
+            ),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text(
+              'Remove',
+              style: TextStyle(color: Colors.redAccent),
+            ),
+          ),
+        ],
+      ),
     );
     if (confirmed == true && context.mounted) {
       context.read<HomeBloc>().add(DeleteProjectEvent(projectId: project.id));
@@ -154,8 +152,8 @@ class _HomeViewState extends State<HomeView> {
                 ),
                 const SizedBox(height: 16),
                 TextButton(
-                  onPressed:
-                      () => context.read<HomeBloc>().add(LoadHomeEvent()),
+                  onPressed: () =>
+                      context.read<HomeBloc>().add(LoadHomeEvent()),
                   child: const Text('Retry'),
                 ),
               ],
@@ -164,12 +162,11 @@ class _HomeViewState extends State<HomeView> {
         }
 
         final query = _searchController.text.toLowerCase();
-        final filtered =
-            query.isEmpty
-                ? state.projects
-                : state.projects
-                    .where((p) => p.name.toLowerCase().contains(query))
-                    .toList();
+        final filtered = query.isEmpty
+            ? state.projects
+            : state.projects
+                .where((p) => p.name.toLowerCase().contains(query))
+                .toList();
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -213,20 +210,18 @@ class _HomeViewState extends State<HomeView> {
                           Icons.search,
                           color: AppColors.onBackground.withValues(alpha: 0.5),
                         ),
-                        suffixIcon:
-                            _searchController.text.isNotEmpty
-                                ? IconButton(
-                                  icon: const Icon(
-                                    Icons.clear,
-                                    color: Colors.white,
-                                    size: 18,
-                                  ),
-                                  onPressed:
-                                      () => setState(
-                                        () => _searchController.clear(),
-                                      ),
-                                )
-                                : null,
+                        suffixIcon: _searchController.text.isNotEmpty
+                            ? IconButton(
+                                icon: const Icon(
+                                  Icons.clear,
+                                  color: Colors.white,
+                                  size: 18,
+                                ),
+                                onPressed: () => setState(
+                                  () => _searchController.clear(),
+                                ),
+                              )
+                            : null,
                         filled: true,
                         fillColor: Colors.white.withValues(alpha: 0.08),
                         border: OutlineInputBorder(
@@ -282,36 +277,32 @@ class _HomeViewState extends State<HomeView> {
 
             // List
             Expanded(
-              child:
-                  filtered.isEmpty
-                      ? const Center(
-                        child: Text(
-                          'No projects found',
-                          style: TextStyle(color: Colors.white54, fontSize: 16),
-                        ),
-                      )
-                      : ListView.separated(
-                        padding: const EdgeInsets.fromLTRB(28, 0, 28, 28),
-                        itemCount: filtered.length,
-                        separatorBuilder: (_, _) => const ListDivider(),
-                        itemBuilder: (ctx, i) {
-                          final project = filtered[i];
-                          return RepaintBoundary(
-                            child: ProjectListTile(
-                              project: project,
-                              onTap:
-                                  () => context.go(
-                                    '/home/projects/${project.id}',
-                                    extra: project,
-                                  ),
-                              onRename:
-                                  () => _showRenameDialog(context, project),
-                              onDelete:
-                                  () => _showDeleteDialog(context, project),
-                            ),
-                          );
-                        },
+              child: filtered.isEmpty
+                  ? const Center(
+                      child: Text(
+                        'No projects found',
+                        style: TextStyle(color: Colors.white54, fontSize: 16),
                       ),
+                    )
+                  : ListView.separated(
+                      padding: const EdgeInsets.fromLTRB(28, 0, 28, 28),
+                      itemCount: filtered.length,
+                      separatorBuilder: (_, __) => const ListDivider(),
+                      itemBuilder: (ctx, i) {
+                        final project = filtered[i];
+                        return RepaintBoundary(
+                          child: ProjectListTile(
+                            project: project,
+                            onTap: () => context.go(
+                              '/home/projects/${project.id}',
+                              extra: project,
+                            ),
+                            onRename: () => _showRenameDialog(context, project),
+                            onDelete: () => _showDeleteDialog(context, project),
+                          ),
+                        );
+                      },
+                    ),
             ),
           ],
         );

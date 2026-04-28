@@ -27,13 +27,14 @@ class ProjectScreen extends StatelessWidget {
       builder:
           (ctx) => AddChapterDialog(
             nameController: nameController,
-            onConfirm: (name, content, file) {
-              if (name.trim().isEmpty || content == null) return;
+            onConfirm: (name, content, bytes, fileName) {
               context.read<ProjectBloc>().add(
                 CreateChapterEvent(
                   projectId: project.id,
                   name: name.trim(),
                   content: content,
+                  bytes: bytes,
+                  fileName: fileName,
                 ),
               );
             },
@@ -229,7 +230,7 @@ class ProjectScreen extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(28, 0, 28, 40),
                 sliver: SliverList.separated(
                   separatorBuilder:
-                      (_, _) => Container(height: 1, color: AppColors.divider),
+                      (_, __) => Container(height: 1, color: AppColors.divider),
                   itemCount: state.chapters.length,
                   itemBuilder: (ctx, i) {
                     final chapter = state.chapters[i];

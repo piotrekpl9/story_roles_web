@@ -1,10 +1,12 @@
+import 'dart:typed_data';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:story_roles_web/presentation/utils/app_config/app_colors.dart';
 
 class AddChapterDialog extends StatefulWidget {
   final TextEditingController nameController;
-  final void Function(String name, String? content, String? fileName) onConfirm;
+  final void Function(String name, String content, Uint8List bytes, String fileName) onConfirm;
 
   const AddChapterDialog({
     super.key,
@@ -19,6 +21,7 @@ class AddChapterDialog extends StatefulWidget {
 class _AddChapterDialogState extends State<AddChapterDialog> {
   String? _fileName;
   String? _fileContent;
+  Uint8List? _fileBytes;
   bool _picking = false;
 
   Future<void> _pickFile() async {
@@ -34,6 +37,7 @@ class _AddChapterDialogState extends State<AddChapterDialog> {
         setState(() {
           _fileName = result.files.single.name;
           _fileContent = String.fromCharCodes(bytes);
+          _fileBytes = bytes;
         });
       }
     } finally {
@@ -163,6 +167,7 @@ class _AddChapterDialogState extends State<AddChapterDialog> {
                             () => setState(() {
                               _fileName = null;
                               _fileContent = null;
+                              _fileBytes = null;
                             }),
                         splashRadius: 14,
                         padding: EdgeInsets.zero,
@@ -196,8 +201,9 @@ class _AddChapterDialogState extends State<AddChapterDialog> {
                   ? () {
                     widget.onConfirm(
                       widget.nameController.text,
-                      _fileContent,
-                      _fileName,
+                      _fileContent!,
+                      _fileBytes!,
+                      _fileName!,
                     );
                     Navigator.of(context).pop();
                   }

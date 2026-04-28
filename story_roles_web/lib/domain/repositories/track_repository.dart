@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:story_roles_web/core/utils/result.dart';
+import 'package:story_roles_web/domain/entities/script_word.dart';
 import 'package:story_roles_web/domain/entities/track.dart';
 import 'package:story_roles_web/domain/entities/track_progress.dart';
 
@@ -15,4 +16,5 @@ abstract class TrackRepository {
   Future<Result> renameTrack(int trackId, String newTitle);
   Future<Result> deleteTrack(int trackId);
   Future<Map<int, TrackProgress>> getAudioProgresses();
+  Future<List<ScriptWord>> getScript(int trackId);
 }

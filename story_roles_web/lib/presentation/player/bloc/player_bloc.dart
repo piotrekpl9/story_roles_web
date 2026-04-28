@@ -6,6 +6,7 @@ import 'package:story_roles_web/data/utils/data_consts.dart';
 import 'package:story_roles_web/data/datasources/abstractions/storage_data_source.dart';
 import 'package:story_roles_web/data/services/audio_progress_service.dart';
 import 'package:story_roles_web/domain/entities/player_state.dart';
+import 'package:story_roles_web/domain/repositories/track_repository.dart';
 import 'package:story_roles_web/presentation/player/bloc/player_bloc_state.dart';
 import 'package:story_roles_web/presentation/player/bloc/player_event.dart';
 import 'package:story_roles_web/presentation/player/player_controller.dart';
@@ -13,6 +14,7 @@ import 'package:story_roles_web/presentation/player/player_controller.dart';
 class PlayerBloc extends Bloc<PlayerEvent, PlayerBlocState> {
   final Dio _dio;
   final StorageDataSource _storageDataSource;
+  final TrackRepository _trackRepository;
 
   PlayerController? _controller;
   AudioProgressService? _progressService;
@@ -20,8 +22,10 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerBlocState> {
   PlayerBloc({
     required Dio dio,
     required StorageDataSource storageDataSource,
+    required TrackRepository trackRepository,
   })  : _dio = dio,
         _storageDataSource = storageDataSource,
+        _trackRepository = trackRepository,
         super(const PlayerBlocState()) {
     on<PlayTrackEvent>(_onPlayTrack);
     on<TogglePlayEvent>(_onTogglePlay);
@@ -86,7 +90,8 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerBlocState> {
         getPlayerState: () => _currentPlayerState,
       );
 
-      emit(state.copyWith(isLoading: false));
+      final script = await _trackRepository.getScript(event.track.id);
+      emit(state.copyWith(isLoading: false, script: script));
     } catch (e) {
       emit(state.copyWith(
         isLoading: false,

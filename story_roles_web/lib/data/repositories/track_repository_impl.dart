@@ -4,6 +4,7 @@ import 'package:story_roles_web/core/error/failures.dart';
 import 'package:story_roles_web/core/utils/result.dart';
 import 'package:story_roles_web/data/datasources/abstractions/track_upload_web_api.dart';
 import 'package:story_roles_web/data/datasources/abstractions/track_web_api.dart';
+import 'package:story_roles_web/domain/entities/script_word.dart';
 import 'package:story_roles_web/domain/entities/track.dart';
 import 'package:story_roles_web/domain/entities/track_progress.dart';
 import 'package:story_roles_web/domain/repositories/track_repository.dart';
@@ -71,4 +72,8 @@ class TrackRepositoryImpl implements TrackRepository {
   @override
   Future<Map<int, TrackProgress>> getAudioProgresses() =>
       trackWebApi.getAudioProgresses();
+
+  @override
+  Future<List<ScriptWord>> getScript(int trackId) =>
+      trackWebApi.getScript(trackId);
 }

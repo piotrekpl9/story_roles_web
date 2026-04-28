@@ -4,6 +4,7 @@ import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:story_roles_web/core/injector.dart';
 import 'package:go_router/go_router.dart';
 import 'package:story_roles_web/core/router.dart';
+import 'package:story_roles_web/domain/repositories/track_repository.dart';
 import 'package:story_roles_web/presentation/player/bloc/player_bloc.dart';
 import 'package:story_roles_web/presentation/screens/auth/bloc/auth_bloc.dart';
 import 'package:story_roles_web/presentation/utils/l10n/app_localizations.dart';
@@ -42,6 +43,7 @@ class _MyAppState extends State<MyApp> {
           create: (_) => PlayerBloc(
             dio: Injector().dioInstance,
             storageDataSource: Injector().resolve(),
+            trackRepository: Injector().resolve<TrackRepository>(),
           ),
         ),
       ],

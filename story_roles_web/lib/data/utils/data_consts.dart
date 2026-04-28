@@ -21,8 +21,11 @@ class _Endpoints {
   String projectById(int projectId) => '/api/v1/projects/$projectId';
   String getChapters(int projectId) => '/api/v1/projects/$projectId/chapters';
   String chapterById(int chapterId) => '/api/v1/chapters/$chapterId';
-  String generateChapterTracks(int chapterId) =>
-      '/api/v1/chapters/$chapterId/generate_tracks';
+  String generateChapterTracks(int projectId, int chapterId) =>
+      '/api/v1/projects/$projectId/chapters/$chapterId/generate';
+  String getScript(int trackId) => '/api/v1/tracks/$trackId/script';
+  final String getLectorVoices = '/api/v1/lector_voices';
+  String lectorVoiceSample(String id) => '/api/v1/lector_voices/$id/sample';
 }
 
 class _ApiParameters {

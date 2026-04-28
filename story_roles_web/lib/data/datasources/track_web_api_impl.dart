@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:story_roles_web/data/datasources/abstractions/track_web_api.dart';
 import 'package:story_roles_web/data/models/track_response_dto.dart';
 import 'package:story_roles_web/data/utils/data_consts.dart';
+import 'package:story_roles_web/domain/entities/script_word.dart';
 import 'package:story_roles_web/domain/entities/track_progress.dart';
 
 class TrackWebApiImpl implements TrackWebApi {
@@ -38,6 +39,19 @@ class TrackWebApiImpl implements TrackWebApi {
   @override
   Future<void> delete(int trackId) async {
     await dio.delete(DataConsts.endpoints.deleteTrack(trackId));
+  }
+
+  @override
+  Future<List<ScriptWord>> getScript(int trackId) async {
+    final response = await dio.get(DataConsts.endpoints.getScript(trackId));
+    final words = response.data['data']['words'] as List? ?? [];
+    return words
+        .map((e) => ScriptWord(
+              word: e['word'] as String,
+              startMs: (e['start_ms'] as num).toInt(),
+              endMs: (e['end_ms'] as num).toInt(),
+            ))
+        .toList();
   }
 
   @override
