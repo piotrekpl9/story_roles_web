@@ -1,11 +1,10 @@
-ARG CACHEBUST=2
-FROM debian:bookworm-slim AS build
+FROM dart:3.9 AS build
 
 RUN apt-get update && apt-get install -y curl git unzip xz-utils zip && rm -rf /var/lib/apt/lists/*
-
-RUN git clone https://github.com/flutter/flutter.git /flutter -b 3.35.6
+RUN git clone https://github.com/flutter/flutter.git /flutter -b stable
 ENV PATH="/flutter/bin:$PATH"
 RUN flutter precache --web
+ENV FLUTTER_ROOT=/flutter
 
 WORKDIR /app
 COPY . .
