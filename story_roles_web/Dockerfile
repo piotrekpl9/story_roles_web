@@ -1,3 +1,4 @@
+ARG CACHEBUST=1
 FROM debian:bookworm-slim AS build
 
 RUN apt-get update && apt-get install -y curl git unzip xz-utils zip && rm -rf /var/lib/apt/lists/*
