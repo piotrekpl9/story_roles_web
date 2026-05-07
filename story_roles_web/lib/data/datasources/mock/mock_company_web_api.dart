@@ -50,4 +50,15 @@ class MockCompanyWebApi implements CompanyWebApi {
     await Future.delayed(const Duration(milliseconds: 200));
     _users.removeWhere((u) => u.id == userId);
   }
+
+  @override
+  Future<List<CompanyResponseDto>> getAll() async {
+    await Future.delayed(const Duration(milliseconds: 200));
+    return [
+      CompanyResponseDto(id: 1, name: 'Helion S.A.', allowedUsers: 10, active: true, createdAt: DateTime(2023, 6, 1)),
+      CompanyResponseDto(id: 2, name: 'Znak Sp. z o.o.', allowedUsers: 5, active: true, createdAt: DateTime(2022, 3, 15)),
+      CompanyResponseDto(id: 3, name: 'PWN Group', allowedUsers: 20, active: false, createdAt: DateTime(2021, 1, 10)),
+      CompanyResponseDto(id: 4, name: 'Rebis Publishing', allowedUsers: 8, active: true, createdAt: DateTime(2024, 2, 20)),
+    ];
+  }
 }

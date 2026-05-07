@@ -21,6 +21,8 @@ import 'package:story_roles_web/presentation/screens/project/project_screen.dart
 import 'package:story_roles_web/domain/repositories/company_repository.dart';
 import 'package:story_roles_web/presentation/screens/organisation/bloc/organisation_bloc.dart';
 import 'package:story_roles_web/presentation/screens/organisation/organisation_screen.dart';
+import 'package:story_roles_web/presentation/screens/organisations/bloc/organisations_list_bloc.dart';
+import 'package:story_roles_web/presentation/screens/organisations/organisations_list_screen.dart';
 
 GoRouter buildRouter(AuthBloc authBloc) {
   return GoRouter(
@@ -96,6 +98,19 @@ GoRouter buildRouter(AuthBloc authBloc) {
                     companyRepository: Injector().resolve<CompanyRepository>(),
                   )..add(const LoadOrganisationEvent()),
                   child: const OrganisationScreen(),
+                ),
+              ),
+            ),
+          ]),
+          StatefulShellBranch(routes: [
+            GoRoute(
+              path: '/organisations',
+              pageBuilder: (context, state) => NoTransitionPage(
+                child: BlocProvider(
+                  create: (_) => OrganisationsListBloc(
+                    companyRepository: Injector().resolve<CompanyRepository>(),
+                  )..add(LoadOrganisationsListEvent()),
+                  child: const OrganisationsListScreen(),
                 ),
               ),
             ),

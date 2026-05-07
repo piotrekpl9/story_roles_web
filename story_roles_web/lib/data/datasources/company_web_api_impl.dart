@@ -3,10 +3,8 @@ import 'package:story_roles_web/data/datasources/abstractions/company_web_api.da
 import 'package:story_roles_web/data/models/company_response_dto.dart';
 import 'package:story_roles_web/data/models/user_response_dto.dart';
 
-// Company/users endpoints not yet implemented – data is hardcoded until backend is ready
 class CompanyWebApiImpl implements CompanyWebApi {
   final Dio dio;
-
   CompanyWebApiImpl({required this.dio});
 
   final Map<String, dynamic> _mockCompany = {
@@ -16,6 +14,13 @@ class CompanyWebApiImpl implements CompanyWebApi {
     'active': true,
     'created_at': '2023-06-01T00:00:00.000Z',
   };
+
+  final List<Map<String, dynamic>> _mockCompanies = [
+    {'id': 1, 'name': 'Helion S.A.', 'allowed_users': 10, 'active': true, 'created_at': '2023-06-01T00:00:00.000Z'},
+    {'id': 2, 'name': 'Znak Sp. z o.o.', 'allowed_users': 5, 'active': true, 'created_at': '2022-03-15T00:00:00.000Z'},
+    {'id': 3, 'name': 'PWN Group', 'allowed_users': 20, 'active': false, 'created_at': '2021-01-10T00:00:00.000Z'},
+    {'id': 4, 'name': 'Rebis Publishing', 'allowed_users': 8, 'active': true, 'created_at': '2024-02-20T00:00:00.000Z'},
+  ];
 
   final List<Map<String, dynamic>> _mockUsers = [
     {
@@ -57,6 +62,11 @@ class CompanyWebApiImpl implements CompanyWebApi {
   @override
   Future<List<UserResponseDto>> getUsers() async {
     return _mockUsers.map(UserResponseDto.fromJson).toList();
+  }
+
+  @override
+  Future<List<CompanyResponseDto>> getAll() async {
+    return _mockCompanies.map(CompanyResponseDto.fromJson).toList();
   }
 
   @override

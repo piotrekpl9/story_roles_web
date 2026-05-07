@@ -36,10 +36,16 @@ class Sidebar extends StatelessWidget {
             onTap: () => onSelect(1),
           ),
           SidebarItem(
-            icon: Icons.person_outline_rounded,
-            label: 'Profile',
+            icon: Icons.domain_outlined,
+            label: 'Organisations',
             isSelected: selectedIndex == 2,
             onTap: () => onSelect(2),
+          ),
+          SidebarItem(
+            icon: Icons.person_outline_rounded,
+            label: 'Profile',
+            isSelected: selectedIndex == 3,
+            onTap: () => onSelect(3),
           ),
         ],
       ),

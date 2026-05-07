@@ -20,4 +20,10 @@ class CompanyRepositoryImpl implements CompanyRepository {
     final dtos = await _companyWebApi.getUsers();
     return dtos.map((e) => e.toDomain()).toList();
   }
+
+  @override
+  Future<List<Company>> getAll() async {
+    final dtos = await _companyWebApi.getAll();
+    return dtos.map((e) => e.toDomain()).toList();
+  }
 }

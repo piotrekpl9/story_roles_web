@@ -13,12 +13,14 @@ import 'package:story_roles_web/data/datasources/abstractions/track_web_api.dart
 import 'package:story_roles_web/data/datasources/auth_web_api_impl.dart';
 import 'package:story_roles_web/data/datasources/chapter_web_api_impl.dart';
 import 'package:story_roles_web/data/datasources/company_web_api_impl.dart';
+import 'package:story_roles_web/data/datasources/http_track_audio_source.dart';
 import 'package:story_roles_web/data/datasources/lector_voice_web_api_impl.dart';
 import 'package:story_roles_web/data/datasources/mock/mock_auth_web_api.dart';
 import 'package:story_roles_web/data/datasources/mock/mock_chapter_web_api.dart';
 import 'package:story_roles_web/data/datasources/mock/mock_company_web_api.dart';
 import 'package:story_roles_web/data/datasources/mock/mock_lector_voice_web_api.dart';
 import 'package:story_roles_web/data/datasources/mock/mock_project_web_api.dart';
+import 'package:story_roles_web/data/datasources/mock/mock_track_audio_source.dart';
 import 'package:story_roles_web/data/datasources/mock/mock_track_upload_web_api.dart';
 import 'package:story_roles_web/data/datasources/mock/mock_track_web_api.dart';
 import 'package:story_roles_web/data/datasources/project_web_api_impl.dart';
@@ -40,6 +42,7 @@ import 'package:story_roles_web/domain/repositories/chapter_repository.dart';
 import 'package:story_roles_web/domain/repositories/company_repository.dart';
 import 'package:story_roles_web/domain/repositories/lector_voice_repository.dart';
 import 'package:story_roles_web/domain/repositories/project_repository.dart';
+import 'package:story_roles_web/domain/repositories/track_audio_source.dart';
 import 'package:story_roles_web/domain/repositories/track_repository.dart';
 import 'package:story_roles_web/presentation/screens/auth/bloc/auth_bloc.dart';
 
@@ -49,8 +52,6 @@ class Injector {
   static final Injector _instance = Injector._();
 
   GetIt get _getIt => GetIt.instance;
-
-  Dio get dioInstance => GetIt.instance.get<Dio>();
 
   T resolve<T extends Object>() => _getIt.get<T>();
 
@@ -89,7 +90,7 @@ class Injector {
         login: _getIt(),
         register: _getIt(),
         logout: _getIt(),
-        storage: _getIt(),
+        authRepository: _getIt(),
       ),
     );
   }
@@ -110,6 +111,9 @@ class Injector {
       );
       _getIt.registerLazySingleton<LectorVoiceWebApi>(
         () => MockLectorVoiceWebApi(),
+      );
+      _getIt.registerLazySingleton<TrackAudioSource>(
+        () => MockTrackAudioSource(),
       );
     } else {
       _getIt.registerLazySingleton<AuthWebApi>(
@@ -132,6 +136,9 @@ class Injector {
       );
       _getIt.registerLazySingleton<LectorVoiceWebApi>(
         () => LectorVoiceWebApiImpl(dio: _getIt()),
+      );
+      _getIt.registerLazySingleton<TrackAudioSource>(
+        () => HttpTrackAudioSource(dio: _getIt()),
       );
     }
 

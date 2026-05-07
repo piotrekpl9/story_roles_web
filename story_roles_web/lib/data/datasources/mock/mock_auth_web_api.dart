@@ -4,9 +4,9 @@ import 'package:story_roles_web/data/datasources/abstractions/auth_web_api.dart'
 import 'package:story_roles_web/data/datasources/mock/mock_data.dart';
 import 'package:story_roles_web/data/models/login_request_dto.dart';
 import 'package:story_roles_web/data/models/login_response_dto.dart';
-import 'package:story_roles_web/data/models/profile_response_dto.dart';
 import 'package:story_roles_web/data/models/register_request_dto.dart';
 import 'package:story_roles_web/data/models/register_response_dto.dart';
+import 'package:story_roles_web/data/models/user_response_dto.dart';
 
 class MockAuthWebApi implements AuthWebApi {
   String? _currentToken;
@@ -27,11 +27,7 @@ class MockAuthWebApi implements AuthWebApi {
     final user = MockData.users.firstWhere((u) => u.id == userId);
 
     return Success(
-      LoginResponseDto(
-        token: token,
-        email: user.email,
-        createdAt: user.createdAt,
-      ),
+      LoginResponseDto(token: token, email: user.email, createdAt: user.createdAt),
     );
   }
 
@@ -45,7 +41,7 @@ class MockAuthWebApi implements AuthWebApi {
   }
 
   @override
-  Future<Result<ProfileResponseDto>> getProfile() async {
+  Future<Result<UserResponseDto>> getProfile() async {
     await Future.delayed(const Duration(milliseconds: 200));
 
     final token = _currentToken;
@@ -58,9 +54,6 @@ class MockAuthWebApi implements AuthWebApi {
       return Error(const AuthFailure('Invalid token'));
     }
 
-    final user = MockData.users.firstWhere((u) => u.id == userId);
-    return Success(
-      ProfileResponseDto(email: user.email, createdAt: user.createdAt),
-    );
+    return Success(MockData.users.firstWhere((u) => u.id == userId));
   }
 }

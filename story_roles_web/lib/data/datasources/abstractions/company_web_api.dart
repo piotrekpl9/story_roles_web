@@ -4,6 +4,7 @@ import 'package:story_roles_web/data/models/user_response_dto.dart';
 abstract class CompanyWebApi {
   Future<CompanyResponseDto> getCompany();
   Future<List<UserResponseDto>> getUsers();
+  Future<List<CompanyResponseDto>> getAll();
   Future<UserResponseDto> createUser({
     required String username,
     required String email,

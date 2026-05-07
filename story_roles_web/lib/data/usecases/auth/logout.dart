@@ -6,7 +6,5 @@ class Logout {
 
   Logout(this.repository);
 
-  Future<Result> call() async {
-    return repository.logout();
-  }
+  Future<Result<void>> call() => repository.logout();
 }

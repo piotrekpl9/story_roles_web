@@ -41,8 +41,7 @@ class _MyAppState extends State<MyApp> {
         BlocProvider.value(value: _authBloc),
         BlocProvider(
           create: (_) => PlayerBloc(
-            dio: Injector().dioInstance,
-            storageDataSource: Injector().resolve(),
+            audioSource: Injector().resolve(),
             trackRepository: Injector().resolve<TrackRepository>(),
           ),
         ),

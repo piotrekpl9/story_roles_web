@@ -4,9 +4,9 @@ import 'package:story_roles_web/core/utils/result.dart';
 import 'package:story_roles_web/data/datasources/abstractions/auth_web_api.dart';
 import 'package:story_roles_web/data/models/login_request_dto.dart';
 import 'package:story_roles_web/data/models/login_response_dto.dart';
-import 'package:story_roles_web/data/models/profile_response_dto.dart';
 import 'package:story_roles_web/data/models/register_request_dto.dart';
 import 'package:story_roles_web/data/models/register_response_dto.dart';
+import 'package:story_roles_web/data/models/user_response_dto.dart';
 import 'package:story_roles_web/data/utils/data_consts.dart';
 
 class AuthWebApiImpl implements AuthWebApi {
@@ -33,9 +33,7 @@ class AuthWebApiImpl implements AuthWebApi {
           response.headers.value('Authorization') ??
           data['token'] as String? ??
           '';
-      return Success(
-        LoginResponseDto.fromJson({...data, 'token': token}),
-      );
+      return Success(LoginResponseDto.fromJson({...data, 'token': token}));
     } catch (e) {
       return Error(const AuthFailure('Login failed'));
     }
@@ -64,10 +62,10 @@ class AuthWebApiImpl implements AuthWebApi {
   }
 
   @override
-  Future<Result<ProfileResponseDto>> getProfile() async {
+  Future<Result<UserResponseDto>> getProfile() async {
     try {
       final response = await dio.get(DataConsts.endpoints.getProfile);
-      return Success(ProfileResponseDto.fromJson(response.data));
+      return Success(UserResponseDto.fromJson(response.data));
     } catch (e) {
       return Error(const AuthFailure('Get profile failed'));
     }

@@ -1,30 +1,23 @@
-import 'package:dio/dio.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:story_roles_web/core/consts.dart';
-import 'package:story_roles_web/data/utils/data_consts.dart';
-import 'package:story_roles_web/data/datasources/abstractions/storage_data_source.dart';
 import 'package:story_roles_web/data/services/audio_progress_service.dart';
 import 'package:story_roles_web/domain/entities/player_state.dart';
+import 'package:story_roles_web/domain/repositories/track_audio_source.dart';
 import 'package:story_roles_web/domain/repositories/track_repository.dart';
 import 'package:story_roles_web/presentation/player/bloc/player_bloc_state.dart';
 import 'package:story_roles_web/presentation/player/bloc/player_event.dart';
 import 'package:story_roles_web/presentation/player/player_controller.dart';
 
 class PlayerBloc extends Bloc<PlayerEvent, PlayerBlocState> {
-  final Dio _dio;
-  final StorageDataSource _storageDataSource;
+  final TrackAudioSource _audioSource;
   final TrackRepository _trackRepository;
 
   PlayerController? _controller;
   AudioProgressService? _progressService;
 
   PlayerBloc({
-    required Dio dio,
-    required StorageDataSource storageDataSource,
+    required TrackAudioSource audioSource,
     required TrackRepository trackRepository,
-  })  : _dio = dio,
-        _storageDataSource = storageDataSource,
+  })  : _audioSource = audioSource,
         _trackRepository = trackRepository,
         super(const PlayerBlocState()) {
     on<PlayTrackEvent>(_onPlayTrack);
@@ -55,29 +48,10 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerBlocState> {
     _controller!.stateNotifier.addListener(() => add(PlayerStateUpdated()));
 
     try {
-      final token = await _storageDataSource.readToken() ?? '';
-      final isMock = token.startsWith('mock-token');
-
-      final Uint8List bytes;
-      if (isMock) {
-        final data = await rootBundle.load('assets/audio/mock_sample.wav');
-        bytes = data.buffer.asUint8List();
-      } else {
-        final audioUrl =
-            '${CoreConsts.baseUrl}api/v1/tracks/${event.track.id}/file';
-        final response = await _dio.get<List<int>>(
-          audioUrl,
-          options: Options(
-            headers: {'Authorization': 'Bearer $token'},
-            responseType: ResponseType.bytes,
-          ),
-        );
-        bytes = Uint8List.fromList(response.data!);
-      }
-
+      final bytes = await _audioSource.fetchAudio(event.track.id);
       await _controller!.loadFromBytes(bytes);
 
-      final savedPosition = await _fetchSavedProgress(event.track.id);
+      final savedPosition = await _audioSource.fetchSavedProgress(event.track.id);
       if (savedPosition > Duration.zero) {
         await _controller!.seek(savedPosition);
       }
@@ -85,7 +59,7 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerBlocState> {
       await _controller!.play();
 
       _progressService = AudioProgressService(
-        dio: _dio,
+        audioSource: _audioSource,
         trackId: event.track.id,
         getPlayerState: () => _currentPlayerState,
       );
@@ -124,24 +98,6 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerBlocState> {
   ) async {
     await _controller?.seek(event.position);
     _progressService?.saveProgress();
-  }
-
-  Future<Duration> _fetchSavedProgress(int trackId) async {
-    print('[AudioProgress] fetchSavedProgress trackId=$trackId');
-    try {
-      final response = await _dio.get(
-        DataConsts.endpoints.getAudioProgress(trackId),
-      );
-      print('[AudioProgress] fetchSavedProgress response: ${response.statusCode} ${response.data}');
-      final seconds = response.data?['data']?['audio_progress']?['attributes']?['progress_seconds'] as num?;
-      print('[AudioProgress] fetchSavedProgress parsed seconds=$seconds');
-      if (seconds != null && seconds > 0) {
-        return Duration(seconds: seconds.toInt());
-      }
-    } catch (e) {
-      print('[AudioProgress] fetchSavedProgress error: $e');
-    }
-    return Duration.zero;
   }
 
   Future<void> _onClosePlayer(
