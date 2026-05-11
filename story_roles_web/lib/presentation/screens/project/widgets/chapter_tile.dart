@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:audioplayers/audioplayers.dart' as ap;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -39,6 +37,14 @@ class _ChapterTileState extends State<ChapterTile> {
   bool _expanded = false;
   bool _showContent = false;
   bool _hovered = false;
+
+  @override
+  void didUpdateWidget(ChapterTile oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!oldWidget.isGenerating && widget.isGenerating) {
+      setState(() => _expanded = true);
+    }
+  }
 
   Future<void> _pickNewFile(BuildContext context) async {
     final result = await FilePicker.platform.pickFiles(

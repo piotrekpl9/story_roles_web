@@ -293,7 +293,7 @@ class _HomeViewState extends State<HomeView> {
                         return RepaintBoundary(
                           child: ProjectListTile(
                             project: project,
-                            onTap: () => context.go(
+                            onTap: () => context.push(
                               '/home/projects/${project.id}',
                               extra: project,
                             ),

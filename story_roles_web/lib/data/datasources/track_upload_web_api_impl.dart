@@ -26,7 +26,6 @@ class TrackUploadWebApiImpl implements TrackUploadWebApi {
       final response = await dio.post(
         DataConsts.endpoints.uploadTrack,
         data: formData,
-        options: Options(validateStatus: (status) => status! < 500),
       );
 
       if (response.statusCode != 200) {

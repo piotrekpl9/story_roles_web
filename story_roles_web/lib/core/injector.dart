@@ -72,7 +72,8 @@ class Injector {
     dio.options
       ..baseUrl = CoreConsts.baseUrl
       ..connectTimeout = const Duration(seconds: 30)
-      ..followRedirects = true;
+      ..followRedirects = true
+      ..validateStatus = (status) => status != null && status < 500;
     dio.interceptors.add(TokenInterceptor(storageDataSource: _getIt()));
     _getIt.registerSingleton<Dio>(dio);
   }

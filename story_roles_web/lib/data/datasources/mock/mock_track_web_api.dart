@@ -58,10 +58,10 @@ class MockTrackWebApi implements TrackWebApi {
 
   /// Called by [MockChapterWebApi] when generation is triggered.
   /// Adds a pending track for the chapter, then marks it completed after 4s.
-  void addPendingTracksForChapter(int chapterId, String chapterName, String narratorId) {
+  TrackResponseDto addPendingTracksForChapter(int chapterId, String chapterName, String narratorId) {
     final id = _nextId++;
 
-    _tracks.add(TrackResponseDto(
+    final pending = TrackResponseDto(
       id: id,
       chapterId: chapterId,
       attributesResponseDto: AttributesResponseDto(
@@ -70,7 +70,8 @@ class MockTrackWebApi implements TrackWebApi {
         createdAt: DateTime.now(),
         status: 'pending',
       ),
-    ));
+    );
+    _tracks.add(pending);
 
     // Simulate async generation completing after 4 seconds
     Future.delayed(const Duration(seconds: 4), () {
@@ -88,5 +89,7 @@ class MockTrackWebApi implements TrackWebApi {
         ),
       );
     });
+
+    return pending;
   }
 }

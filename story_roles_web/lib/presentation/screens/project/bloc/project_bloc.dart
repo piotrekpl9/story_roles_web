@@ -148,21 +148,32 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
     GenerateTracksEvent event,
     Emitter<ProjectState> emit,
   ) async {
-    // Mark as generating
     emit(state.copyWith(
       generatingChapterIds: {...state.generatingChapterIds, event.chapterId},
     ));
 
-    await _chapterRepository.generateTracks(event.projectId, event.chapterId, event.lectorVoice);
+    final result = await _chapterRepository.generateTracks(
+      event.projectId,
+      event.chapterId,
+      event.lectorVoice,
+    );
 
-    // Reload tracks for this chapter and unmark generating
-    final tracks = await _trackRepository.getByChapter(event.chapterId);
-    final updatedTracks = {...state.tracksByChapter, event.chapterId: tracks};
     final updatedGenerating = Set.of(state.generatingChapterIds)
       ..remove(event.chapterId);
-    emit(state.copyWith(
-      tracksByChapter: updatedTracks,
-      generatingChapterIds: updatedGenerating,
-    ));
+
+    if (result.isSuccess) {
+      final pendingTrack = result.dataOrNull!;
+      final existing = state.tracksByChapter[event.chapterId] ?? [];
+      final updatedTracks = {
+        ...state.tracksByChapter,
+        event.chapterId: [...existing, pendingTrack],
+      };
+      emit(state.copyWith(
+        tracksByChapter: updatedTracks,
+        generatingChapterIds: updatedGenerating,
+      ));
+    } else {
+      emit(state.copyWith(generatingChapterIds: updatedGenerating));
+    }
   }
 }

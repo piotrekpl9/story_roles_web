@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:story_roles_web/data/models/chapter_response_dto.dart';
+import 'package:story_roles_web/data/models/track_response_dto.dart';
 
 abstract class ChapterWebApi {
   Future<List<ChapterResponseDto>> getAll(int projectId);
@@ -14,5 +15,5 @@ abstract class ChapterWebApi {
   Future<void> rename(int chapterId, String newName);
   Future<void> updateContent(int chapterId, String content);
   Future<void> delete(int chapterId);
-  Future<void> generateTracks(int projectId, int chapterId, String lectorVoice);
+  Future<TrackResponseDto> generateTracks(int projectId, int chapterId, String lectorVoice);
 }

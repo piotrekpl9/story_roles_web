@@ -9,11 +9,11 @@ class TrackResponseDto {
   TrackResponseDto({required this.id, this.chapterId, required this.attributesResponseDto});
 
   factory TrackResponseDto.fromJson(Map<String, dynamic> json) {
+    final attrs = json['attributes'] as Map<String, dynamic>;
     return TrackResponseDto(
       id: int.parse(json['id'].toString()),
-      attributesResponseDto: AttributesResponseDto.fromJson(
-        json['attributes'] as Map<String, dynamic>,
-      ),
+      chapterId: (attrs['chapter_id'] as num?)?.toInt(),
+      attributesResponseDto: AttributesResponseDto.fromJson(attrs),
     );
   }
 

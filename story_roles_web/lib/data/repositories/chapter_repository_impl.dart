@@ -4,6 +4,7 @@ import 'package:story_roles_web/core/error/failures.dart';
 import 'package:story_roles_web/core/utils/result.dart';
 import 'package:story_roles_web/data/datasources/abstractions/chapter_web_api.dart';
 import 'package:story_roles_web/domain/entities/chapter.dart';
+import 'package:story_roles_web/domain/entities/track.dart';
 import 'package:story_roles_web/domain/repositories/chapter_repository.dart';
 
 class ChapterRepositoryImpl implements ChapterRepository {
@@ -70,10 +71,10 @@ class ChapterRepositoryImpl implements ChapterRepository {
   }
 
   @override
-  Future<Result> generateTracks(int projectId, int chapterId, String lectorVoice) async {
+  Future<Result<Track>> generateTracks(int projectId, int chapterId, String lectorVoice) async {
     try {
-      await chapterWebApi.generateTracks(projectId, chapterId, lectorVoice);
-      return Success(());
+      final dto = await chapterWebApi.generateTracks(projectId, chapterId, lectorVoice);
+      return Success(dto.toDomain());
     } catch (_) {
       return Error(const ServerFailure('Failed to generate tracks'));
     }

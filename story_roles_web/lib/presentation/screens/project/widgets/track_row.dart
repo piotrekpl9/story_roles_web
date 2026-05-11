@@ -20,12 +20,29 @@ class TrackRow extends StatefulWidget {
   State<TrackRow> createState() => _TrackRowState();
 }
 
-class _TrackRowState extends State<TrackRow> {
+class _TrackRowState extends State<TrackRow>
+    with SingleTickerProviderStateMixin {
   bool _hovered = false;
+  late final AnimationController _dotsController;
+
+  @override
+  void initState() {
+    super.initState();
+    _dotsController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _dotsController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final ready = widget.track.attributes.status.name == 'completed';
+    final ready = widget.track.attributes.status == TrackStatus.completed;
 
     return MouseRegion(
       onEnter: (_) => setState(() => _hovered = true),
@@ -36,47 +53,43 @@ class _TrackRowState extends State<TrackRow> {
         child: ColoredBox(
           color: _hovered && ready ? AppColors.cardHover : Colors.transparent,
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
             child: Row(
               children: [
                 Icon(
                   _hovered && ready ? Icons.play_arrow : Icons.headphones,
-                  size: 16,
-                  color:
-                      _hovered && ready
-                          ? AppColors.primary
-                          : AppColors.onBackground.withValues(alpha: 0.4),
+                  size: 18,
+                  color: _hovered && ready
+                      ? AppColors.primary
+                      : AppColors.onBackground.withValues(alpha: 0.4),
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     widget.track.attributes.title,
                     style: TextStyle(
-                      color:
-                          _hovered && ready
-                              ? AppColors.primary
-                              : AppColors.onBackground.withValues(alpha: 0.85),
+                      color: _hovered && ready
+                          ? AppColors.primary
+                          : AppColors.onBackground.withValues(alpha: 0.85),
                       fontSize: 14,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                const SizedBox(width: 12),
-                ready
-                    ? const Text(
-                      'Ready',
-                      style: TextStyle(color: Colors.green, fontSize: 12),
-                    )
-                    : Text(
-                      'Processing',
-                      style: TextStyle(
-                        color: Colors.orange.withValues(alpha: 0.8),
-                        fontSize: 12,
-                      ),
-                    ),
-                if (_hovered)
-                  IconButton(
+                const SizedBox(width: 16),
+                if (ready)
+                  const Text(
+                    'Ready',
+                    style: TextStyle(color: Colors.green, fontSize: 12),
+                  )
+                else
+                  _AnimatedProcessing(controller: _dotsController),
+                const SizedBox(width: 16),
+                AnimatedOpacity(
+                  opacity: _hovered ? 1.0 : 0.0,
+                  duration: const Duration(milliseconds: 150),
+                  child: IconButton(
                     tooltip: 'Remove',
                     icon: Icon(
                       Icons.delete_outline,
@@ -87,11 +100,72 @@ class _TrackRowState extends State<TrackRow> {
                     splashRadius: 14,
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),
-                  )
-                else
-                  const SizedBox(width: 24),
+                  ),
+                ),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AnimatedProcessing extends StatelessWidget {
+  final AnimationController controller;
+
+  const _AnimatedProcessing({required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: controller,
+      builder: (context, _) {
+        final t = controller.value;
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              'Processing',
+              style: TextStyle(
+                color: Colors.orange.withValues(alpha: 0.8),
+                fontSize: 12,
+              ),
+            ),
+            const SizedBox(width: 2),
+            _Dot(delay: 0.0, t: t),
+            _Dot(delay: 0.2, t: t),
+            _Dot(delay: 0.4, t: t),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _Dot extends StatelessWidget {
+  final double delay;
+  final double t;
+
+  const _Dot({required this.delay, required this.t});
+
+  @override
+  Widget build(BuildContext context) {
+    final phase = ((t - delay) % 1.0 + 1.0) % 1.0;
+    // fade in first half, fade out second half
+    final opacity = phase < 0.5 ? phase * 2 : (1.0 - phase) * 2;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 1),
+      child: Opacity(
+        opacity: opacity.clamp(0.15, 1.0),
+        child: Text(
+          '.',
+          style: TextStyle(
+            color: Colors.orange.withValues(alpha: 0.9),
+            fontSize: 14,
+            height: 1.0,
           ),
         ),
       ),

@@ -72,8 +72,7 @@ class _MainScreenState extends State<MainScreen> {
                 BlocBuilder<PlayerBloc, PlayerBlocState>(
                   builder: (context, state) {
                     return AnimatedSize(
-                      duration: const Duration(milliseconds: 250),
-                      curve: Curves.easeInOut,
+                      duration: Duration.zero,
                       child: state.hasTrack
                           ? Row(
                               mainAxisSize: MainAxisSize.min,

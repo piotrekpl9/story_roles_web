@@ -112,7 +112,7 @@ class ProjectScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     TextButton.icon(
-                      onPressed: () => context.go('/home'),
+                      onPressed: () => context.pop(),
                       icon: Icon(
                         Icons.arrow_back_ios_new,
                         size: 14,

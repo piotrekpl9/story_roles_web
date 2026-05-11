@@ -4,6 +4,7 @@ import 'package:story_roles_web/data/datasources/abstractions/chapter_web_api.da
 import 'package:story_roles_web/data/datasources/mock/mock_data.dart';
 import 'package:story_roles_web/data/datasources/mock/mock_track_web_api.dart';
 import 'package:story_roles_web/data/models/chapter_response_dto.dart';
+import 'package:story_roles_web/data/models/track_response_dto.dart';
 
 class MockChapterWebApi implements ChapterWebApi {
   final MockTrackWebApi _trackWebApi;
@@ -76,9 +77,9 @@ class MockChapterWebApi implements ChapterWebApi {
   }
 
   @override
-  Future<void> generateTracks(int projectId, int chapterId, String lectorVoice) async {
+  Future<TrackResponseDto> generateTracks(int projectId, int chapterId, String lectorVoice) async {
     await Future.delayed(const Duration(milliseconds: 300));
     final chapter = _chapters.firstWhere((c) => c.id == chapterId);
-    _trackWebApi.addPendingTracksForChapter(chapterId, chapter.name, lectorVoice);
+    return _trackWebApi.addPendingTracksForChapter(chapterId, chapter.name, lectorVoice);
   }
 }

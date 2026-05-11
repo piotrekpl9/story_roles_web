@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:story_roles_web/core/error/failures.dart';
 import 'package:story_roles_web/data/datasources/abstractions/chapter_web_api.dart';
 import 'package:story_roles_web/data/models/chapter_response_dto.dart';
+import 'package:story_roles_web/data/models/track_response_dto.dart';
 import 'package:story_roles_web/data/utils/data_consts.dart';
 
 class ChapterWebApiImpl implements ChapterWebApi {
@@ -38,7 +39,6 @@ class ChapterWebApiImpl implements ChapterWebApi {
     final response = await dio.post(
       DataConsts.endpoints.getChapters(projectId),
       data: formData,
-      options: Options(validateStatus: (status) => status! < 500),
     );
 
     if (response.statusCode != 201 && response.statusCode != 200) {
@@ -73,10 +73,17 @@ class ChapterWebApiImpl implements ChapterWebApi {
   }
 
   @override
-  Future<void> generateTracks(int projectId, int chapterId, String lectorVoice) async {
-    await dio.post(
+  Future<TrackResponseDto> generateTracks(int projectId, int chapterId, String lectorVoice) async {
+    final response = await dio.post(
       DataConsts.endpoints.generateChapterTracks(projectId, chapterId),
-      data: {'lector_voice': lectorVoice},
+      data: {'lector_voice': int.parse(lectorVoice)},
+    );
+    final trackJson = response.data['data']['track'] as Map<String, dynamic>;
+    final dto = TrackResponseDto.fromJson(trackJson);
+    return TrackResponseDto(
+      id: dto.id,
+      chapterId: chapterId,
+      attributesResponseDto: dto.attributesResponseDto,
     );
   }
 }
