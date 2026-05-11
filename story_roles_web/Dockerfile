@@ -9,7 +9,7 @@ ENV FLUTTER_ROOT=/flutter
 WORKDIR /app
 COPY . .
 RUN flutter pub get
-RUN flutter build web --release --pwa-strategy online-first
+RUN flutter build web --release --pwa-strategy none
 
 FROM nginx:alpine
 COPY --from=build /app/build/web /usr/share/nginx/html
