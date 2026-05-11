@@ -2,71 +2,32 @@ import 'package:dio/dio.dart';
 import 'package:story_roles_web/data/datasources/abstractions/company_web_api.dart';
 import 'package:story_roles_web/data/models/company_response_dto.dart';
 import 'package:story_roles_web/data/models/user_response_dto.dart';
+import 'package:story_roles_web/data/utils/data_consts.dart';
 
 class CompanyWebApiImpl implements CompanyWebApi {
   final Dio dio;
+
   CompanyWebApiImpl({required this.dio});
-
-  final Map<String, dynamic> _mockCompany = {
-    'id': 1,
-    'name': 'Helion S.A.',
-    'allowed_users': 10,
-    'active': true,
-    'created_at': '2023-06-01T00:00:00.000Z',
-  };
-
-  final List<Map<String, dynamic>> _mockCompanies = [
-    {'id': 1, 'name': 'Helion S.A.', 'allowed_users': 10, 'active': true, 'created_at': '2023-06-01T00:00:00.000Z'},
-    {'id': 2, 'name': 'Znak Sp. z o.o.', 'allowed_users': 5, 'active': true, 'created_at': '2022-03-15T00:00:00.000Z'},
-    {'id': 3, 'name': 'PWN Group', 'allowed_users': 20, 'active': false, 'created_at': '2021-01-10T00:00:00.000Z'},
-    {'id': 4, 'name': 'Rebis Publishing', 'allowed_users': 8, 'active': true, 'created_at': '2024-02-20T00:00:00.000Z'},
-  ];
-
-  final List<Map<String, dynamic>> _mockUsers = [
-    {
-      'id': 1,
-      'role': 1,
-      'company_id': 1,
-      'username': 'Anna Kowalska',
-      'email': 'anna.kowalska@helion.pl',
-      'active': true,
-      'created_at': '2023-06-01T00:00:00.000Z',
-    },
-    {
-      'id': 2,
-      'role': 2,
-      'company_id': 1,
-      'username': 'Marek Nowak',
-      'email': 'marek.nowak@helion.pl',
-      'active': true,
-      'created_at': '2023-07-15T00:00:00.000Z',
-    },
-    {
-      'id': 3,
-      'role': 2,
-      'company_id': 1,
-      'username': 'Katarzyna Wiśniewska',
-      'email': 'k.wisniewska@helion.pl',
-      'active': true,
-      'created_at': '2023-09-20T00:00:00.000Z',
-    },
-  ];
-
-  int _nextUserId = 10;
 
   @override
   Future<CompanyResponseDto> getCompany() async {
-    return CompanyResponseDto.fromJson(_mockCompany);
+    final response = await dio.get(DataConsts.endpoints.getCompany);
+    return CompanyResponseDto.fromJson(response.data['data'] as Map<String, dynamic>);
   }
 
   @override
   Future<List<UserResponseDto>> getUsers() async {
-    return _mockUsers.map(UserResponseDto.fromJson).toList();
+    final company = await getCompany();
+    final response = await dio.get(DataConsts.endpoints.getCompanyUsers(company.id));
+    final list = response.data['data']['users'] as List? ?? [];
+    return list.map((e) => UserResponseDto.fromJson(e as Map<String, dynamic>)).toList();
   }
 
   @override
   Future<List<CompanyResponseDto>> getAll() async {
-    return _mockCompanies.map(CompanyResponseDto.fromJson).toList();
+    final response = await dio.get(DataConsts.endpoints.getCompanies);
+    final list = response.data['data']['companies'] as List? ?? [];
+    return list.map((e) => CompanyResponseDto.fromJson(e as Map<String, dynamic>)).toList();
   }
 
   @override
@@ -75,21 +36,17 @@ class CompanyWebApiImpl implements CompanyWebApi {
     required String email,
     required String password,
   }) async {
-    final data = {
-      'id': _nextUserId++,
-      'role': 2,
-      'company_id': 1,
-      'username': username,
-      'email': email,
-      'active': true,
-      'created_at': DateTime.now().toIso8601String(),
-    };
-    _mockUsers.add(data);
-    return UserResponseDto.fromJson(data);
+    final company = await getCompany();
+    final response = await dio.post(
+      DataConsts.endpoints.getCompanyUsers(company.id),
+      data: {'user': {'username': username, 'email': email, 'password': password}},
+    );
+    return UserResponseDto.fromJson(response.data['data']['user'] as Map<String, dynamic>);
   }
 
   @override
   Future<void> deleteUser(int userId) async {
-    _mockUsers.removeWhere((u) => u['id'] == userId);
+    final company = await getCompany();
+    await dio.delete(DataConsts.endpoints.companyUser(company.id, userId));
   }
 }

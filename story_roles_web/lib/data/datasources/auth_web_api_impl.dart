@@ -29,10 +29,11 @@ class AuthWebApiImpl implements AuthWebApi {
         },
       );
       final data = response.data[DataConsts.dataKeys.data] as Map<String, dynamic>;
-      final token = response.headers.value('authorization') ??
+      final rawToken = response.headers.value('authorization') ??
           response.headers.value('Authorization') ??
           data['token'] as String? ??
           '';
+      final token = rawToken.startsWith('Bearer ') ? rawToken.substring(7) : rawToken;
       return Success(LoginResponseDto.fromJson({...data, 'token': token}));
     } catch (e) {
       return Error(const AuthFailure('Login failed'));

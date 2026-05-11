@@ -26,6 +26,11 @@ class _Endpoints {
   String getScript(int trackId) => '/api/v1/tracks/$trackId/script';
   final String getLectorVoices = '/api/v1/lector_voices';
   String lectorVoiceSample(String id) => '/api/v1/lector_voices/$id/sample';
+  final String getCompany = '/api/v1/companies/mine';
+  final String getCompanies = '/api/v1/companies';
+  String getCompanyUsers(int companyId) => '/api/v1/companies/$companyId/users';
+  String companyUser(int companyId, int userId) =>
+      '/api/v1/companies/$companyId/users/$userId';
 }
 
 class _ApiParameters {
