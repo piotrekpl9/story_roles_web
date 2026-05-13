@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:story_roles_web/core/consts.dart';
 import 'package:story_roles_web/data/core/token_interceptor.dart';
+import 'package:story_roles_web/data/core/unauthorized_interceptor.dart';
 import 'package:story_roles_web/data/datasources/abstractions/auth_web_api.dart';
 import 'package:story_roles_web/data/datasources/abstractions/chapter_web_api.dart';
 import 'package:story_roles_web/data/datasources/abstractions/company_web_api.dart';
@@ -71,7 +72,12 @@ class Injector {
       ..followRedirects = true
       ..validateStatus = (status) => status != null && status < 500;
     dio.interceptors.add(TokenInterceptor(storageDataSource: _getIt()));
+    final unauthorizedInterceptor = UnauthorizedInterceptor(
+      storageDataSource: _getIt(),
+    );
+    dio.interceptors.add(unauthorizedInterceptor);
     _getIt.registerSingleton<Dio>(dio);
+    _getIt.registerSingleton<UnauthorizedInterceptor>(unauthorizedInterceptor);
   }
 
   void _initUseCases() {

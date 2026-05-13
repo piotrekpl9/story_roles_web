@@ -4,6 +4,7 @@ import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:story_roles_web/core/injector.dart';
 import 'package:go_router/go_router.dart';
 import 'package:story_roles_web/core/router.dart';
+import 'package:story_roles_web/data/core/unauthorized_interceptor.dart';
 import 'package:story_roles_web/domain/repositories/track_repository.dart';
 import 'package:story_roles_web/presentation/player/bloc/player_bloc.dart';
 import 'package:story_roles_web/presentation/screens/auth/bloc/auth_bloc.dart';
@@ -32,6 +33,8 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     _authBloc = Injector().resolve<AuthBloc>()..add(AppStarted());
     _router = buildRouter(_authBloc);
+    Injector().resolve<UnauthorizedInterceptor>().onUnauthorized =
+        () => _authBloc.add(LogoutClicked());
   }
 
   @override
