@@ -9,8 +9,7 @@ class _Endpoints {
   final String register = "signup";
   final String getProfile = "/current_user";
   final String getTracks = "/api/v1/tracks";
-  final String uploadTrack = "/api/v1/uploads/create_async";
-  String getAudioProgress(int trackId) =>
+String getAudioProgress(int trackId) =>
       '/api/v1/tracks/$trackId/audio_progress';
   String saveAudioProgress(int trackId) =>
       '/api/v1/tracks/$trackId/audio_progress/save';

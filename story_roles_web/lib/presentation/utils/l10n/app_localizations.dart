@@ -45,16 +45,6 @@ abstract class AppLocalizations {
   String get enterValidEmail;
   String get passwordRequired;
   String passwordRequireMinCharacters(int numberOfCharacters);
-  String get uploadTrack;
-  String get chooseAudioFile;
-  String get uploadButton;
-  String get titleRequired;
-  String get titleTooLong;
-  String get fileRequired;
-  String get uploadSuccess;
-  String get uploadError;
-  String get uploading;
-  String get noFileSelected;
   String get backToLogin;
   String get registrationFailed;
   String get registrationSuccess;

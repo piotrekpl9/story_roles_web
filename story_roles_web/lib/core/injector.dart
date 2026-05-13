@@ -8,7 +8,6 @@ import 'package:story_roles_web/data/datasources/abstractions/company_web_api.da
 import 'package:story_roles_web/data/datasources/abstractions/lector_voice_web_api.dart';
 import 'package:story_roles_web/data/datasources/abstractions/project_web_api.dart';
 import 'package:story_roles_web/data/datasources/abstractions/storage_data_source.dart';
-import 'package:story_roles_web/data/datasources/abstractions/track_upload_web_api.dart';
 import 'package:story_roles_web/data/datasources/abstractions/track_web_api.dart';
 import 'package:story_roles_web/data/datasources/auth_web_api_impl.dart';
 import 'package:story_roles_web/data/datasources/chapter_web_api_impl.dart';
@@ -21,11 +20,9 @@ import 'package:story_roles_web/data/datasources/mock/mock_company_web_api.dart'
 import 'package:story_roles_web/data/datasources/mock/mock_lector_voice_web_api.dart';
 import 'package:story_roles_web/data/datasources/mock/mock_project_web_api.dart';
 import 'package:story_roles_web/data/datasources/mock/mock_track_audio_source.dart';
-import 'package:story_roles_web/data/datasources/mock/mock_track_upload_web_api.dart';
 import 'package:story_roles_web/data/datasources/mock/mock_track_web_api.dart';
 import 'package:story_roles_web/data/datasources/project_web_api_impl.dart';
 import 'package:story_roles_web/data/datasources/storage_data_source_impl.dart';
-import 'package:story_roles_web/data/datasources/track_upload_web_api_impl.dart';
 import 'package:story_roles_web/data/datasources/track_web_api_impl.dart';
 import 'package:story_roles_web/data/repositories/auth_repository_impl.dart';
 import 'package:story_roles_web/data/repositories/chapter_repository_impl.dart';
@@ -36,7 +33,6 @@ import 'package:story_roles_web/data/repositories/track_repository_impl.dart';
 import 'package:story_roles_web/data/usecases/auth/login.dart';
 import 'package:story_roles_web/data/usecases/auth/logout.dart';
 import 'package:story_roles_web/data/usecases/auth/register.dart';
-import 'package:story_roles_web/data/usecases/track/upload_track.dart';
 import 'package:story_roles_web/domain/repositories/auth_repository.dart';
 import 'package:story_roles_web/domain/repositories/chapter_repository.dart';
 import 'package:story_roles_web/domain/repositories/company_repository.dart';
@@ -82,7 +78,6 @@ class Injector {
     _getIt.registerLazySingleton(() => Login(_getIt()));
     _getIt.registerLazySingleton(() => Register(_getIt()));
     _getIt.registerLazySingleton(() => Logout(_getIt()));
-    _getIt.registerLazySingleton(() => UploadTrack(_getIt()));
   }
 
   void _initBlocs() {
@@ -100,9 +95,6 @@ class Injector {
     if (_useMocks) {
       _getIt.registerLazySingleton<AuthWebApi>(() => MockAuthWebApi());
       _getIt.registerLazySingleton<TrackWebApi>(() => MockTrackWebApi());
-      _getIt.registerLazySingleton<TrackUploadWebApi>(
-        () => MockTrackUploadWebApi(),
-      );
       _getIt.registerLazySingleton<CompanyWebApi>(() => MockCompanyWebApi());
       _getIt.registerLazySingleton<ProjectWebApi>(() => MockProjectWebApi());
       _getIt.registerLazySingleton<ChapterWebApi>(
@@ -122,9 +114,6 @@ class Injector {
       );
       _getIt.registerLazySingleton<TrackWebApi>(
         () => TrackWebApiImpl(dio: _getIt()),
-      );
-      _getIt.registerLazySingleton<TrackUploadWebApi>(
-        () => TrackUploadWebApiImpl(dio: _getIt()),
       );
       _getIt.registerLazySingleton<CompanyWebApi>(
         () => CompanyWebApiImpl(dio: _getIt()),
@@ -147,10 +136,7 @@ class Injector {
       () => AuthRepositoryImpl(webApi: _getIt(), storageDataSource: _getIt()),
     );
     _getIt.registerLazySingleton<TrackRepository>(
-      () => TrackRepositoryImpl(
-        trackWebApi: _getIt(),
-        trackUploadWebApi: _getIt(),
-      ),
+      () => TrackRepositoryImpl(trackWebApi: _getIt()),
     );
     _getIt.registerLazySingleton<CompanyRepository>(
       () => CompanyRepositoryImpl(companyWebApi: _getIt()),

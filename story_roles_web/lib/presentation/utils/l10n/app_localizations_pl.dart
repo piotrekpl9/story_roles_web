@@ -37,37 +37,7 @@ class AppLocalizationsPl extends AppLocalizations {
   }
 
   @override
-  String get uploadTrack => 'Wgraj plik';
-
-  @override
   String get trackTitle => 'Tytuł pliku';
-
-  @override
-  String get chooseAudioFile => 'Wybierz plik';
-
-  @override
-  String get uploadButton => 'Wgraj';
-
-  @override
-  String get titleRequired => 'Tytuł jest wymagany';
-
-  @override
-  String get titleTooLong => 'Tytuł musi mieć mniej niż 100 znaków';
-
-  @override
-  String get fileRequired => 'Proszę wybrać plik';
-
-  @override
-  String get uploadSuccess => 'Plik został przesłany!';
-
-  @override
-  String get uploadError => 'Błąd przesyłania pliku. Spróbuj ponownie.';
-
-  @override
-  String get uploading => 'Przesyłanie...';
-
-  @override
-  String get noFileSelected => 'Nie wybrano pliku';
 
   @override
   String get backToLogin => 'Powrót do logowania';

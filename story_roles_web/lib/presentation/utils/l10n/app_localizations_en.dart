@@ -37,37 +37,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get uploadTrack => 'Upload File';
-
-  @override
   String get trackTitle => 'File Title';
-
-  @override
-  String get chooseAudioFile => 'Choose File';
-
-  @override
-  String get uploadButton => 'Upload';
-
-  @override
-  String get titleRequired => 'Title is required';
-
-  @override
-  String get titleTooLong => 'Title must be less than 100 characters';
-
-  @override
-  String get fileRequired => 'Please select a file';
-
-  @override
-  String get uploadSuccess => 'File uploaded successfully!';
-
-  @override
-  String get uploadError => 'Failed to upload file. Please try again.';
-
-  @override
-  String get uploading => 'Uploading...';
-
-  @override
-  String get noFileSelected => 'No file selected';
 
   @override
   String get backToLogin => 'Back to Login';
