@@ -42,6 +42,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             status: AuthStatus.authenticated,
             email: user.email,
             createdAt: user.createdAt,
+            isAdmin: user.isAdmin,
           ));
         }
       },
@@ -62,6 +63,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         status: AuthStatus.authenticated,
         email: user.email,
         createdAt: user.createdAt,
+        isAdmin: user.isAdmin,
         errorMessage: null,
       )),
       onError: (_) => emit(state.copyWith(

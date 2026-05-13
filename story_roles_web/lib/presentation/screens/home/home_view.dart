@@ -134,7 +134,7 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<HomeBloc, HomeState>(
-      builder: (context, state) {
+      builder: (blocCtx, state) {
         if (state.status == HomeBlocStatus.loading ||
             state.status == HomeBlocStatus.initial) {
           return const Center(
@@ -153,7 +153,7 @@ class _HomeViewState extends State<HomeView> {
                 const SizedBox(height: 16),
                 TextButton(
                   onPressed: () =>
-                      context.read<HomeBloc>().add(LoadHomeEvent()),
+                      blocCtx.read<HomeBloc>().add(LoadHomeEvent()),
                   child: const Text('Retry'),
                 ),
               ],
@@ -182,7 +182,7 @@ class _HomeViewState extends State<HomeView> {
                   ),
                   const SizedBox(width: 16),
                   FilledButton.icon(
-                    onPressed: () => _showCreateDialog(context),
+                    onPressed: () => _showCreateDialog(blocCtx),
                     icon: const Icon(Icons.add, size: 18),
                     label: const Text('New project'),
                     style: FilledButton.styleFrom(
@@ -295,10 +295,9 @@ class _HomeViewState extends State<HomeView> {
                             project: project,
                             onTap: () => context.push(
                               '/home/projects/${project.id}',
-                              extra: project,
                             ),
-                            onRename: () => _showRenameDialog(context, project),
-                            onDelete: () => _showDeleteDialog(context, project),
+                            onRename: () => _showRenameDialog(blocCtx, project),
+                            onDelete: () => _showDeleteDialog(blocCtx, project),
                           ),
                         );
                       },

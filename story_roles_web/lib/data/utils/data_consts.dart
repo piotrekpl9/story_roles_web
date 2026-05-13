@@ -7,7 +7,7 @@ class DataConsts {
 class _Endpoints {
   final String login = "login";
   final String register = "signup";
-  final String getProfile = "/api/v1/users/me";
+  final String getProfile = "/current_user";
   final String getTracks = "/api/v1/tracks";
   final String uploadTrack = "/api/v1/uploads/create_async";
   String getAudioProgress(int trackId) =>
@@ -31,6 +31,11 @@ class _Endpoints {
   String getCompanyUsers(int companyId) => '/api/v1/companies/$companyId/users';
   String companyUser(int companyId, int userId) =>
       '/api/v1/companies/$companyId/users/$userId';
+  final String getAvailableUsers = '/api/v1/users';
+  final String companies = '/api/v1/companies';
+  String companyById(int id) => '/api/v1/companies/$id';
+  String assignUserToCompany(int companyId) =>
+      '/api/v1/companies/$companyId/assign_user';
 }
 
 class _ApiParameters {

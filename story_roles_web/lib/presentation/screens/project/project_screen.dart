@@ -15,11 +15,9 @@ import 'package:story_roles_web/presentation/utils/app_config/app_colors.dart';
 import 'package:story_roles_web/presentation/utils/app_config/app_typography.dart';
 
 class ProjectScreen extends StatelessWidget {
-  final Project project;
+  const ProjectScreen({super.key});
 
-  const ProjectScreen({super.key, required this.project});
-
-  Future<void> _showAddChapterDialog(BuildContext context) async {
+  Future<void> _showAddChapterDialog(BuildContext context, Project project) async {
     final nameController = TextEditingController();
     await showDialog<void>(
       context: context,
@@ -81,7 +79,10 @@ class ProjectScreen extends StatelessWidget {
             child: CircularProgressIndicator(color: Color(0xFFFF8A5B)),
           );
         }
-        if (state.status == ProjectStatus.failure) {
+        if (state.status == ProjectStatus.failure || state.project == null) {
+          final projectId = int.parse(
+            GoRouterState.of(context).pathParameters['id']!,
+          );
           return Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -92,16 +93,16 @@ class ProjectScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 TextButton(
-                  onPressed:
-                      () => context.read<ProjectBloc>().add(
-                        LoadProjectEvent(project.id),
-                      ),
+                  onPressed: () => context
+                      .read<ProjectBloc>()
+                      .add(LoadProjectEvent(projectId)),
                   child: const Text('Retry'),
                 ),
               ],
             ),
           );
         }
+        final project = state.project!;
 
         return CustomScrollView(
           slivers: [
@@ -140,7 +141,7 @@ class ProjectScreen extends StatelessWidget {
                           ),
                         ),
                         FilledButton.icon(
-                          onPressed: () => _showAddChapterDialog(context),
+                          onPressed: () => _showAddChapterDialog(context, project),
                           icon: const Icon(Icons.add, size: 18),
                           label: const Text('New chapter'),
                           style: FilledButton.styleFrom(
@@ -215,7 +216,7 @@ class ProjectScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       TextButton(
-                        onPressed: () => _showAddChapterDialog(context),
+                        onPressed: () => _showAddChapterDialog(context, project),
                         child: Text(
                           'Add the first chapter',
                           style: TextStyle(color: AppColors.primary),

@@ -12,6 +12,12 @@ class MockProjectWebApi implements ProjectWebApi {
   static const _companyId = 1;
 
   @override
+  Future<ProjectResponseDto> getById(int projectId) async {
+    await Future.delayed(const Duration(milliseconds: 200));
+    return _projects.firstWhere((p) => p.id == projectId);
+  }
+
+  @override
   Future<List<ProjectResponseDto>> getAll() async {
     await Future.delayed(const Duration(milliseconds: 300));
     return List.unmodifiable(_projects);

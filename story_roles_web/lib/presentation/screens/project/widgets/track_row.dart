@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:story_roles_web/core/utils/date_helper.dart';
 import 'package:story_roles_web/domain/entities/track.dart';
 import 'package:story_roles_web/presentation/utils/app_config/app_colors.dart';
 
@@ -75,6 +76,14 @@ class _TrackRowState extends State<TrackRow>
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Text(
+                  formatDate(widget.track.attributes.createdAt),
+                  style: TextStyle(
+                    color: AppColors.onBackground.withValues(alpha: 0.35),
+                    fontSize: 11,
                   ),
                 ),
                 const SizedBox(width: 16),

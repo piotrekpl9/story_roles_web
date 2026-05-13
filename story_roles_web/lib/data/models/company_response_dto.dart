@@ -16,12 +16,13 @@ class CompanyResponseDto {
   });
 
   factory CompanyResponseDto.fromJson(Map<String, dynamic> json) {
+    final attrs = (json['attributes'] as Map<String, dynamic>?) ?? json;
     return CompanyResponseDto(
-      id: json['id'] as int,
-      name: json['name'] as String,
-      allowedUsers: json['allowed_users'] as int,
-      active: json['active'] as bool,
-      createdAt: DateTime.parse(json['created_at'] as String),
+      id: int.parse(attrs['id'].toString()),
+      name: attrs['name'] as String,
+      allowedUsers: attrs['allowed_users'] as int,
+      active: attrs['active'] as bool,
+      createdAt: DateTime.parse(attrs['created_at'] as String),
     );
   }
 

@@ -8,8 +8,8 @@ import 'package:story_roles_web/presentation/player/bloc/player_bloc_state.dart'
 import 'package:story_roles_web/presentation/screens/home/bloc/home_bloc.dart';
 import 'package:story_roles_web/presentation/screens/home/home_view.dart';
 import 'package:story_roles_web/domain/repositories/company_repository.dart';
-import 'package:story_roles_web/presentation/screens/organisation/bloc/organisation_bloc.dart';
-import 'package:story_roles_web/presentation/screens/organisation/organisation_screen.dart';
+import 'package:story_roles_web/presentation/screens/company/bloc/company_bloc.dart';
+import 'package:story_roles_web/presentation/screens/company/company_screen.dart';
 import 'package:story_roles_web/presentation/screens/profile/profile_screen.dart';
 import 'package:story_roles_web/presentation/screens/script/script_view.dart';
 import 'package:story_roles_web/presentation/utils/app_config/app_colors.dart';
@@ -54,12 +54,12 @@ class _MainScreenState extends State<MainScreen> {
                         child: const HomeView(),
                       ),
 
-                      // Organisation
+                      // Company
                       BlocProvider(
-                        create: (_) => OrganisationBloc(
+                        create: (_) => CompanyBloc(
                           companyRepository: Injector().resolve<CompanyRepository>(),
-                        )..add(const LoadOrganisationEvent()),
-                        child: const OrganisationScreen(),
+                        )..add(const LoadCompanyEvent(0)),
+                        child: const CompanyScreen(),
                       ),
 
                       // Profile

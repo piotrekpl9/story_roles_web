@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:story_roles_web/presentation/screens/auth/bloc/auth_bloc.dart';
 import 'package:story_roles_web/presentation/utils/app_config/app_colors.dart';
 import 'package:story_roles_web/presentation/utils/app_config/app_typography.dart';
 
@@ -10,6 +12,8 @@ class Sidebar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isAdmin = context.select((AuthBloc b) => b.state.isAdmin);
+
     return Container(
       width: 220,
       color: AppColors.sidebar,
@@ -24,16 +28,23 @@ class Sidebar extends StatelessWidget {
             ),
           ),
           SidebarItem(
-            icon: Icons.home_rounded,
-            label: 'Home',
+            icon: Icons.folder_outlined,
+            label: 'Projects',
             isSelected: selectedIndex == 0,
             onTap: () => onSelect(0),
           ),
+          if (isAdmin)
+            SidebarItem(
+              icon: Icons.business_outlined,
+              label: 'Companies',
+              isSelected: selectedIndex == 1,
+              onTap: () => onSelect(1),
+            ),
           SidebarItem(
             icon: Icons.person_outline_rounded,
             label: 'Profile',
-            isSelected: selectedIndex == 1,
-            onTap: () => onSelect(1),
+            isSelected: selectedIndex == 2,
+            onTap: () => onSelect(2),
           ),
         ],
       ),

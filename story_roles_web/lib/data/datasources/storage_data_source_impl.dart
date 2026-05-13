@@ -5,6 +5,7 @@ class StorageDataSourceImpl implements StorageDataSource {
   static const _tokenKey = 'auth_token';
   static const _emailKey = 'auth_email';
   static const _createdAtKey = 'auth_created_at';
+  static const _isAdminKey = 'auth_is_admin';
 
   @override
   Future<void> writeToken(String token) async {
@@ -24,15 +25,17 @@ class StorageDataSourceImpl implements StorageDataSource {
     await prefs.remove(_tokenKey);
     await prefs.remove(_emailKey);
     await prefs.remove(_createdAtKey);
+    await prefs.remove(_isAdminKey);
   }
 
   @override
-  Future<void> writeUserData({required String email, String? createdAt}) async {
+  Future<void> writeUserData({required String email, String? createdAt, bool isAdmin = false}) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_emailKey, email);
     if (createdAt != null) {
       await prefs.setString(_createdAtKey, createdAt);
     }
+    await prefs.setBool(_isAdminKey, isAdmin);
   }
 
   @override
@@ -41,6 +44,7 @@ class StorageDataSourceImpl implements StorageDataSource {
     return {
       'email': prefs.getString(_emailKey),
       'created_at': prefs.getString(_createdAtKey),
+      'is_admin': prefs.getBool(_isAdminKey)?.toString(),
     };
   }
 }

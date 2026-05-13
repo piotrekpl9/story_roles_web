@@ -5,23 +5,28 @@ import 'package:story_roles_web/core/utils/result.dart';
 import 'package:story_roles_web/domain/entities/chapter.dart';
 import 'package:story_roles_web/domain/entities/lector_voice.dart';
 import 'package:story_roles_web/domain/entities/track.dart';
+import 'package:story_roles_web/domain/entities/project.dart';
 import 'package:story_roles_web/domain/repositories/chapter_repository.dart';
 import 'package:story_roles_web/domain/repositories/lector_voice_repository.dart';
+import 'package:story_roles_web/domain/repositories/project_repository.dart';
 import 'package:story_roles_web/domain/repositories/track_repository.dart';
 
 part 'project_event.dart';
 part 'project_state.dart';
 
 class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
+  final ProjectRepository _projectRepository;
   final ChapterRepository _chapterRepository;
   final TrackRepository _trackRepository;
   final LectorVoiceRepository _lectorVoiceRepository;
 
   ProjectBloc({
+    required ProjectRepository projectRepository,
     required ChapterRepository chapterRepository,
     required TrackRepository trackRepository,
     required LectorVoiceRepository lectorVoiceRepository,
-  })  : _chapterRepository = chapterRepository,
+  })  : _projectRepository = projectRepository,
+        _chapterRepository = chapterRepository,
         _trackRepository = trackRepository,
         _lectorVoiceRepository = lectorVoiceRepository,
         super(const ProjectState()) {
@@ -38,8 +43,10 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
       LoadProjectEvent event, Emitter<ProjectState> emit) async {
     emit(state.copyWith(status: ProjectStatus.loading));
     try {
+      final projectF = _projectRepository.getById(event.projectId);
       final chaptersF = _chapterRepository.getAll(event.projectId);
       final voicesF = _lectorVoiceRepository.getAll();
+      final project = await projectF;
       final chapters = await chaptersF;
       final lectorVoices = await voicesF;
 
@@ -51,6 +58,7 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
 
       emit(state.copyWith(
         status: ProjectStatus.success,
+        project: project,
         chapters: chapters,
         tracksByChapter: tracksByChapter,
         lectorVoices: lectorVoices,

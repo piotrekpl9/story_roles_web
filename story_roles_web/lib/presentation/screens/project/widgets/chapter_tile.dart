@@ -37,6 +37,7 @@ class _ChapterTileState extends State<ChapterTile> {
   bool _expanded = false;
   bool _showContent = false;
   bool _hovered = false;
+  bool _sortNewestFirst = true;
 
   @override
   void didUpdateWidget(ChapterTile oldWidget) {
@@ -369,23 +370,61 @@ class _ChapterTileState extends State<ChapterTile> {
                       ),
                     )
                     : Column(
-                      children:
-                          widget.tracks
-                              .map(
-                                (t) => TrackRow(
-                                  track: t,
-                                  chapterId: widget.chapter.id,
-                                  onPlay: () => widget.onPlayTrack(t),
-                                  onDelete:
-                                      () => context.read<ProjectBloc>().add(
-                                        DeleteTrackEvent(
-                                          trackId: t.id,
-                                          chapterId: widget.chapter.id,
-                                        ),
-                                      ),
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              'Tracks',
+                              style: TextStyle(
+                                color: AppColors.onBackground.withValues(alpha: 0.4),
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 0.4,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            Tooltip(
+                              message: _sortNewestFirst ? 'Newest first' : 'Oldest first',
+                              child: InkWell(
+                                onTap: () => setState(() => _sortNewestFirst = !_sortNewestFirst),
+                                borderRadius: BorderRadius.circular(4),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(2),
+                                  child: Icon(
+                                    _sortNewestFirst
+                                        ? Icons.arrow_downward
+                                        : Icons.arrow_upward,
+                                    size: 12,
+                                    color: AppColors.onBackground.withValues(alpha: 0.4),
+                                  ),
                                 ),
-                              )
-                              .toList(),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        ...(() {
+                          final sorted = [...widget.tracks]..sort(
+                            (a, b) => _sortNewestFirst
+                                ? b.attributes.createdAt.compareTo(a.attributes.createdAt)
+                                : a.attributes.createdAt.compareTo(b.attributes.createdAt),
+                          );
+                          return sorted.map(
+                            (t) => TrackRow(
+                              track: t,
+                              chapterId: widget.chapter.id,
+                              onPlay: () => widget.onPlayTrack(t),
+                              onDelete: () => context.read<ProjectBloc>().add(
+                                DeleteTrackEvent(
+                                  trackId: t.id,
+                                  chapterId: widget.chapter.id,
+                                ),
+                              ),
+                            ),
+                          );
+                        })(),
+                      ],
                     ),
           ),
       ],

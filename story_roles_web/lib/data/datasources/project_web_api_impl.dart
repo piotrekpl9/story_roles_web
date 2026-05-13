@@ -18,6 +18,12 @@ class ProjectWebApiImpl implements ProjectWebApi {
   }
 
   @override
+  Future<ProjectResponseDto> getById(int projectId) async {
+    final response = await dio.get(DataConsts.endpoints.projectById(projectId));
+    return ProjectResponseDto.fromJson(response.data['data']['project']);
+  }
+
+  @override
   Future<ProjectResponseDto> create({required String name}) async {
     final response = await dio.post(
       DataConsts.endpoints.getProjects,

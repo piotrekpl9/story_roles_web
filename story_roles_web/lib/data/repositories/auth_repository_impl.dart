@@ -27,24 +27,19 @@ class AuthRepositoryImpl implements AuthRepository {
 
     final dto = result.dataOrNull!;
     await storageDataSource.writeToken(dto.token);
+
+    final profileResult = await webApi.getProfile();
+    final user = profileResult.isSuccess
+        ? profileResult.dataOrNull!.toDomain()
+        : User(email: dto.email, isAdmin: false, createdAt: dto.createdAt);
+
     await storageDataSource.writeUserData(
-      email: dto.email,
-      createdAt: dto.createdAt?.toIso8601String(),
+      email: user.email,
+      createdAt: user.createdAt?.toIso8601String(),
+      isAdmin: user.isAdmin,
     );
 
-    // Fetch full profile now that token is stored and interceptor will attach it.
-    final profileResult = await webApi.getProfile();
-    if (profileResult.isSuccess) {
-      return Success(profileResult.dataOrNull!.toDomain());
-    }
-
-    // Fall back to a partial User from login response when profile fetch fails.
-    return Success(User(
-      email: dto.email,
-      role: UserRole.member,
-      username: dto.email,
-      createdAt: dto.createdAt,
-    ));
+    return Success(user);
   }
 
   @override
@@ -70,15 +65,26 @@ class AuthRepositoryImpl implements AuthRepository {
     final token = await storageDataSource.readToken();
     if (token == null) return const Success(null);
 
+    final profileResult = await webApi.getProfile();
+    if (profileResult.isSuccess) {
+      final user = profileResult.dataOrNull!.toDomain();
+      await storageDataSource.writeUserData(
+        email: user.email,
+        createdAt: user.createdAt?.toIso8601String(),
+        isAdmin: user.isAdmin,
+      );
+      return Success(user);
+    }
+
     final userData = await storageDataSource.readUserData();
     final email = userData['email'];
     if (email == null) return const Success(null);
 
+    final isAdmin = userData['is_admin'] == 'true';
     final createdAtStr = userData['created_at'];
     return Success(User(
       email: email,
-      role: UserRole.member,
-      username: email,
+      isAdmin: isAdmin,
       createdAt: createdAtStr != null ? DateTime.tryParse(createdAtStr) : null,
     ));
   }

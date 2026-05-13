@@ -16,6 +16,12 @@ class ProjectRepositoryImpl implements ProjectRepository {
   }
 
   @override
+  Future<Project> getById(int projectId) async {
+    final dto = await projectWebApi.getById(projectId);
+    return dto.toDomain();
+  }
+
+  @override
   Future<Project> create({required String name}) async {
     final dto = await projectWebApi.create(name: name);
     return dto.toDomain();

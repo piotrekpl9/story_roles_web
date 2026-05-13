@@ -4,6 +4,7 @@ enum ProjectStatus { initial, loading, success, failure }
 
 class ProjectState extends Equatable {
   final ProjectStatus status;
+  final Project? project;
   final List<Chapter> chapters;
   final Map<int, List<Track>> tracksByChapter;
   final Set<int> generatingChapterIds;
@@ -11,6 +12,7 @@ class ProjectState extends Equatable {
 
   const ProjectState({
     this.status = ProjectStatus.initial,
+    this.project,
     this.chapters = const [],
     this.tracksByChapter = const {},
     this.generatingChapterIds = const {},
@@ -19,6 +21,7 @@ class ProjectState extends Equatable {
 
   ProjectState copyWith({
     ProjectStatus? status,
+    Project? project,
     List<Chapter>? chapters,
     Map<int, List<Track>>? tracksByChapter,
     Set<int>? generatingChapterIds,
@@ -26,6 +29,7 @@ class ProjectState extends Equatable {
   }) {
     return ProjectState(
       status: status ?? this.status,
+      project: project ?? this.project,
       chapters: chapters ?? this.chapters,
       tracksByChapter: tracksByChapter ?? this.tracksByChapter,
       generatingChapterIds: generatingChapterIds ?? this.generatingChapterIds,
@@ -34,5 +38,5 @@ class ProjectState extends Equatable {
   }
 
   @override
-  List<Object> get props => [status, chapters, tracksByChapter, generatingChapterIds, lectorVoices];
+  List<Object?> get props => [status, project, chapters, tracksByChapter, generatingChapterIds, lectorVoices];
 }

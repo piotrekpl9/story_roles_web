@@ -9,6 +9,7 @@ import 'package:story_roles_web/data/models/project_response_dto.dart';
 import 'package:story_roles_web/data/models/track_response_dto.dart';
 import 'package:story_roles_web/data/models/attributes_response_dto.dart';
 import 'package:story_roles_web/data/models/user_response_dto.dart';
+import 'package:story_roles_web/data/models/user_summary_response_dto.dart';
 import 'package:story_roles_web/domain/entities/script_word.dart';
 
 abstract final class MockData {
@@ -25,41 +26,52 @@ abstract final class MockData {
   // ── Users ──────────────────────────────────────────────────────────────────
   // role 1 = owner, role 2 = member
 
+  static final availableUsers = <UserSummaryResponseDto>[
+    UserSummaryResponseDto(
+      id: 1,
+      email: 'anna.kowalska@helion.pl',
+      createdAt: DateTime(2022, 1, 15),
+    ),
+    UserSummaryResponseDto(
+      id: 2,
+      email: 'marek.nowak@helion.pl',
+      createdAt: DateTime(2022, 3, 10),
+    ),
+    UserSummaryResponseDto(
+      id: 3,
+      email: 'k.wisniewska@helion.pl',
+      createdAt: DateTime(2022, 5, 20),
+    ),
+    UserSummaryResponseDto(
+      id: 4,
+      email: 'p.zielinski@helion.pl',
+      createdAt: DateTime(2023, 2, 1),
+    ),
+  ];
+
   static final users = <UserResponseDto>[
     UserResponseDto(
       id: 1,
-      role: 1,
-      companyId: 1,
-      username: 'anna.kowalska',
       email: 'anna.kowalska@helion.pl',
-      active: true,
+      isAdmin: true,
       createdAt: DateTime(2022, 1, 15),
     ),
     UserResponseDto(
       id: 2,
-      role: 2,
-      companyId: 1,
-      username: 'marek.nowak',
       email: 'marek.nowak@helion.pl',
-      active: true,
+      isAdmin: false,
       createdAt: DateTime(2022, 3, 10),
     ),
     UserResponseDto(
       id: 3,
-      role: 2,
-      companyId: 1,
-      username: 'katarzyna.wiśniewska',
       email: 'k.wisniewska@helion.pl',
-      active: true,
+      isAdmin: false,
       createdAt: DateTime(2022, 5, 20),
     ),
     UserResponseDto(
       id: 4,
-      role: 2,
-      companyId: 1,
-      username: 'piotr.zielinski',
       email: 'p.zielinski@helion.pl',
-      active: false,
+      isAdmin: false,
       createdAt: DateTime(2023, 2, 1),
     ),
   ];
