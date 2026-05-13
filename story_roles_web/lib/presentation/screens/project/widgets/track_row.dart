@@ -80,7 +80,7 @@ class _TrackRowState extends State<TrackRow>
                 ),
                 const SizedBox(width: 16),
                 Text(
-                  formatDate(widget.track.attributes.createdAt),
+                  formatDateTime(widget.track.attributes.createdAt),
                   style: TextStyle(
                     color: AppColors.onBackground.withValues(alpha: 0.35),
                     fontSize: 11,
