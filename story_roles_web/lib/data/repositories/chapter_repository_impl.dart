@@ -71,9 +71,9 @@ class ChapterRepositoryImpl implements ChapterRepository {
   }
 
   @override
-  Future<Result<Track>> generateTracks(int projectId, int chapterId, String lectorVoice) async {
+  Future<Result<Track>> generateTracks(int projectId, int chapterId, String lectorVoice, String emotion) async {
     try {
-      final dto = await chapterWebApi.generateTracks(projectId, chapterId, lectorVoice);
+      final dto = await chapterWebApi.generateTracks(projectId, chapterId, lectorVoice, emotion);
       return Success(dto.toDomain());
     } catch (_) {
       return Error(const ServerFailure('Failed to generate tracks'));

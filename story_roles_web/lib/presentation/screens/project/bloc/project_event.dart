@@ -73,8 +73,9 @@ class GenerateTracksEvent extends ProjectEvent {
   final int projectId;
   final int chapterId;
   final String lectorVoice;
-  const GenerateTracksEvent(this.projectId, this.chapterId, this.lectorVoice);
+  final String emotion;
+  const GenerateTracksEvent(this.projectId, this.chapterId, this.lectorVoice, this.emotion);
 
   @override
-  List<Object> get props => [projectId, chapterId, lectorVoice];
+  List<Object> get props => [projectId, chapterId, lectorVoice, emotion];
 }

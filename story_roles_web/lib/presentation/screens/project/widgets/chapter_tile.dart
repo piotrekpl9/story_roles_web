@@ -69,13 +69,14 @@ class _ChapterTileState extends State<ChapterTile> {
     final bloc = context.read<ProjectBloc>();
     final voices = bloc.state.lectorVoices;
     final repo = context.read<LectorVoiceRepository>();
-    final selected = await showDialog<String>(
+    final result = await showDialog<(String, String)>(
       context: context,
       builder: (ctx) => _NarratorDialog(voices: voices, repository: repo),
     );
-    if (selected != null && context.mounted) {
+    if (result != null && context.mounted) {
+      final (voiceId, emotion) = result;
       bloc.add(
-        GenerateTracksEvent(widget.chapter.projectId, widget.chapter.id, selected),
+        GenerateTracksEvent(widget.chapter.projectId, widget.chapter.id, voiceId, emotion),
       );
     }
   }
@@ -446,6 +447,16 @@ class _NarratorDialogState extends State<_NarratorDialog> {
   final ap.AudioPlayer _player = ap.AudioPlayer();
   String? _playingId;
   bool _loading = false;
+  String? _selectedVoiceId;
+  String _selectedEmotion = 'neutral';
+
+  static const _emotions = ['neutral', 'expressive', 'calm'];
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.voices.isNotEmpty) _selectedVoiceId = widget.voices.first.id;
+  }
 
   @override
   void dispose() {
@@ -486,62 +497,123 @@ class _NarratorDialogState extends State<_NarratorDialog> {
         'Choose narrator',
         style: TextStyle(color: Colors.white, fontSize: 16),
       ),
-      children: widget.voices.map((v) {
-        final isPlaying = _playingId == v.id;
-        final isLoadingThis = _loading && _playingId == v.id;
-        return SimpleDialogOption(
-          onPressed: () => Navigator.of(context).pop(v.id),
-          child: Row(
-            children: [
-              Icon(
-                Icons.person_outline,
-                size: 20,
-                color: AppColors.onBackground.withValues(alpha: 0.6),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      v.name,
-                      style: const TextStyle(color: Colors.white, fontSize: 14),
-                    ),
-                    if (v.description.isNotEmpty)
-                      Text(
-                        v.description,
-                        style: TextStyle(
-                          color: AppColors.onBackground.withValues(alpha: 0.45),
-                          fontSize: 11,
-                        ),
-                      ),
-                  ],
+      children: [
+        ...widget.voices.map((v) {
+          final isPlaying = _playingId == v.id;
+          final isLoadingThis = _loading && _playingId == v.id;
+          final isSelected = _selectedVoiceId == v.id;
+          return SimpleDialogOption(
+            onPressed: () => setState(() => _selectedVoiceId = v.id),
+            child: Row(
+              children: [
+                Icon(
+                  isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+                  size: 18,
+                  color: isSelected ? AppColors.primary : AppColors.onBackground.withValues(alpha: 0.4),
                 ),
-              ),
-              GestureDetector(
-                onTap: () => _toggleSample(v.id),
-                child: Padding(
-                  padding: const EdgeInsets.all(4),
-                  child: isLoadingThis
-                      ? SizedBox(
-                          width: 16,
-                          height: 16,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
+                const SizedBox(width: 8),
+                Icon(
+                  Icons.person_outline,
+                  size: 20,
+                  color: AppColors.onBackground.withValues(alpha: 0.6),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        v.name,
+                        style: const TextStyle(color: Colors.white, fontSize: 14),
+                      ),
+                      if (v.description.isNotEmpty)
+                        Text(
+                          v.description,
+                          style: TextStyle(
+                            color: AppColors.onBackground.withValues(alpha: 0.45),
+                            fontSize: 11,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () => _toggleSample(v.id),
+                  child: Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: isLoadingThis
+                        ? SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: AppColors.primary,
+                            ),
+                          )
+                        : Icon(
+                            isPlaying ? Icons.stop : Icons.play_arrow,
+                            size: 18,
                             color: AppColors.primary,
                           ),
-                        )
-                      : Icon(
-                          isPlaying ? Icons.stop : Icons.play_arrow,
-                          size: 18,
-                          color: AppColors.primary,
-                        ),
+                  ),
                 ),
+              ],
+            ),
+          );
+        }),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Emotion',
+                style: TextStyle(
+                  color: AppColors.onBackground.withValues(alpha: 0.6),
+                  fontSize: 12,
+                ),
+              ),
+              const SizedBox(height: 6),
+              DropdownButtonFormField<String>(
+                initialValue: _selectedEmotion,
+                dropdownColor: AppColors.card,
+                style: const TextStyle(color: Colors.white, fontSize: 14),
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(6),
+                    borderSide: BorderSide(color: AppColors.onBackground.withValues(alpha: 0.2)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(6),
+                    borderSide: BorderSide(color: AppColors.primary),
+                  ),
+                ),
+                items: _emotions
+                    .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                    .toList(),
+                onChanged: (v) {
+                  if (v != null) setState(() => _selectedEmotion = v);
+                },
               ),
             ],
           ),
-        );
-      }).toList(),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+            ),
+            onPressed: _selectedVoiceId == null
+                ? null
+                : () => Navigator.of(context).pop((_selectedVoiceId!, _selectedEmotion)),
+            child: const Text('Generate'),
+          ),
+        ),
+      ],
     );
   }
 }

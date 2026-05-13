@@ -16,5 +16,5 @@ abstract class ChapterRepository {
   Future<Result> rename(int chapterId, String newName);
   Future<Result> updateContent(int chapterId, String content);
   Future<Result> delete(int chapterId);
-  Future<Result<Track>> generateTracks(int projectId, int chapterId, String lectorVoice);
+  Future<Result<Track>> generateTracks(int projectId, int chapterId, String lectorVoice, String emotion);
 }

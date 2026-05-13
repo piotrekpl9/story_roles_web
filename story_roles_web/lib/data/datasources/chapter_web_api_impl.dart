@@ -73,10 +73,10 @@ class ChapterWebApiImpl implements ChapterWebApi {
   }
 
   @override
-  Future<TrackResponseDto> generateTracks(int projectId, int chapterId, String lectorVoice) async {
+  Future<TrackResponseDto> generateTracks(int projectId, int chapterId, String lectorVoice, String emotion) async {
     final response = await dio.post(
       DataConsts.endpoints.generateChapterTracks(projectId, chapterId),
-      data: {'lector_voice': int.parse(lectorVoice)},
+      data: {'lector_voice': int.parse(lectorVoice), 'emotion': emotion},
     );
     final trackJson = response.data['data']['track'] as Map<String, dynamic>;
     final dto = TrackResponseDto.fromJson(trackJson);

@@ -77,7 +77,7 @@ class MockChapterWebApi implements ChapterWebApi {
   }
 
   @override
-  Future<TrackResponseDto> generateTracks(int projectId, int chapterId, String lectorVoice) async {
+  Future<TrackResponseDto> generateTracks(int projectId, int chapterId, String lectorVoice, String emotion) async {
     await Future.delayed(const Duration(milliseconds: 300));
     final chapter = _chapters.firstWhere((c) => c.id == chapterId);
     return _trackWebApi.addPendingTracksForChapter(chapterId, chapter.name, lectorVoice);

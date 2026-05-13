@@ -164,6 +164,7 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
       event.projectId,
       event.chapterId,
       event.lectorVoice,
+      event.emotion,
     );
 
     final updatedGenerating = Set.of(state.generatingChapterIds)

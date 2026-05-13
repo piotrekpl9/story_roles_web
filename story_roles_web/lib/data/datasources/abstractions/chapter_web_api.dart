@@ -15,5 +15,5 @@ abstract class ChapterWebApi {
   Future<void> rename(int chapterId, String newName);
   Future<void> updateContent(int chapterId, String content);
   Future<void> delete(int chapterId);
-  Future<TrackResponseDto> generateTracks(int projectId, int chapterId, String lectorVoice);
+  Future<TrackResponseDto> generateTracks(int projectId, int chapterId, String lectorVoice, String emotion);
 }
