@@ -21,9 +21,14 @@ class TrackWebApiImpl implements TrackWebApi {
 
   @override
   Future<List<TrackResponseDto>> getByChapter(int chapterId) async {
-    // TODO: replace with real endpoint when backend supports it
-    final all = await getAll();
-    return all.where((t) => t.chapterId == chapterId).toList();
+    final response = await dio.get(
+      DataConsts.endpoints.getTracks,
+      queryParameters: {'chapter_id': chapterId},
+    );
+    return (response.data["data"]["tracks"] as List?)
+            ?.map((e) => TrackResponseDto.fromJson(e))
+            .toList() ??
+        [];
   }
 
   @override
@@ -56,8 +61,7 @@ class TrackWebApiImpl implements TrackWebApi {
 
   @override
   Future<List<ScriptWord>> getAlignment(int trackId) async {
-    final response =
-        await dio.get(DataConsts.endpoints.getAlignment(trackId));
+    final response = await dio.get(DataConsts.endpoints.getAlignment(trackId));
     final words = response.data['words'] as List? ?? [];
     return words
         .map((e) => ScriptWord(

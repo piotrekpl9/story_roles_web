@@ -81,45 +81,26 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> with PollingMixin {
     SilentRefreshProjectEvent event,
     Emitter<ProjectState> emit,
   ) async {
-    final projectResult = await _projectRepository.getById(event.projectId);
-    final chaptersResult = await _chapterRepository.getAll(event.projectId);
+    final pendingChapterIds = state.tracksByChapter.entries
+        .where((e) => e.value.any((t) => t.attributes.status == TrackStatus.pending))
+        .map((e) => e.key)
+        .toList();
 
-    projectResult.fold(
-      onSuccess: (_) {},
-      onError: (failure) {
-        debugPrint('ProjectBloc polling error (project): $failure');
-        emit(state.copyWith(status: ProjectStatus.failure));
-      },
-    );
-    if (projectResult.isError) return;
+    if (pendingChapterIds.isEmpty) {
+      stopPolling();
+      return;
+    }
 
-    chaptersResult.fold(
-      onSuccess: (_) {},
-      onError: (failure) {
-        debugPrint('ProjectBloc polling error (chapters): $failure');
-        emit(state.copyWith(status: ProjectStatus.failure));
-      },
-    );
-    if (chaptersResult.isError) return;
-
-    final updatedProject = projectResult.dataOrNull!;
-    final updatedChapters = chaptersResult.dataOrNull!;
-
-    final tracksByChapter = <int, List<Track>>{};
-    await Future.wait(updatedChapters.map((c) async {
-      final tracksResult = await _trackRepository.getByChapter(c.id);
+    final updatedTracks = Map.of(state.tracksByChapter);
+    await Future.wait(pendingChapterIds.map((chapterId) async {
+      final tracksResult = await _trackRepository.getByChapter(chapterId);
       tracksResult.fold(
-        onSuccess: (tracks) => tracksByChapter[c.id] = tracks,
-        onError: (_) => tracksByChapter[c.id] = state.tracksByChapter[c.id] ?? [],
+        onSuccess: (tracks) => updatedTracks[chapterId] = tracks,
+        onError: (_) {},
       );
     }));
 
-    emit(state.copyWith(
-      status: ProjectStatus.success,
-      project: updatedProject,
-      chapters: updatedChapters,
-      tracksByChapter: tracksByChapter,
-    ));
+    emit(state.copyWith(tracksByChapter: updatedTracks));
   }
 
   Future<void> _onRenameChapter(
@@ -227,6 +208,7 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> with PollingMixin {
         tracksByChapter: updatedTracks,
         generatingChapterIds: updatedGenerating,
       ));
+      startPolling(() async => add(SilentRefreshProjectEvent(event.projectId)));
     } else {
       emit(state.copyWith(generatingChapterIds: updatedGenerating));
     }
