@@ -20,13 +20,19 @@ class AddChapterDialog extends StatefulWidget {
 }
 
 class _AddChapterDialogState extends State<AddChapterDialog> {
+  static const int _maxFileSizeBytes = 5 * 1024;
+
   String? _fileName;
   String? _fileContent;
   Uint8List? _fileBytes;
   bool _picking = false;
+  String? _fileError;
 
   Future<void> _pickFile() async {
-    setState(() => _picking = true);
+    setState(() {
+      _picking = true;
+      _fileError = null;
+    });
     try {
       final result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
@@ -35,6 +41,15 @@ class _AddChapterDialogState extends State<AddChapterDialog> {
       );
       if (result != null && result.files.single.bytes != null) {
         final bytes = result.files.single.bytes!;
+        if (bytes.length > _maxFileSizeBytes) {
+          setState(() {
+            _fileError = 'File is too large. Maximum size is 5 KB.';
+            _fileName = null;
+            _fileContent = null;
+            _fileBytes = null;
+          });
+          return;
+        }
         setState(() {
           _fileName = result.files.single.name;
           _fileContent = utf8.decode(bytes);
@@ -178,7 +193,13 @@ class _AddChapterDialogState extends State<AddChapterDialog> {
                 ),
               ),
             ),
-            if (_fileContent != null) ...[
+            if (_fileError != null) ...[
+              const SizedBox(height: 6),
+              Text(
+                _fileError!,
+                style: const TextStyle(color: Colors.redAccent, fontSize: 11),
+              ),
+            ] else if (_fileContent != null) ...[
               const SizedBox(height: 6),
               Text(
                 '${_fileContent!.length} characters',
