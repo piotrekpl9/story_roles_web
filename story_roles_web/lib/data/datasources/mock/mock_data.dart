@@ -27,26 +27,10 @@ abstract final class MockData {
   // role 1 = owner, role 2 = member
 
   static final availableUsers = <UserSummaryResponseDto>[
-    UserSummaryResponseDto(
-      id: 1,
-      email: 'anna.kowalska@helion.pl',
-      createdAt: DateTime(2022, 1, 15),
-    ),
-    UserSummaryResponseDto(
-      id: 2,
-      email: 'marek.nowak@helion.pl',
-      createdAt: DateTime(2022, 3, 10),
-    ),
-    UserSummaryResponseDto(
-      id: 3,
-      email: 'k.wisniewska@helion.pl',
-      createdAt: DateTime(2022, 5, 20),
-    ),
-    UserSummaryResponseDto(
-      id: 4,
-      email: 'p.zielinski@helion.pl',
-      createdAt: DateTime(2023, 2, 1),
-    ),
+    UserSummaryResponseDto(id: 1, email: 'anna.kowalska@helion.pl'),
+    UserSummaryResponseDto(id: 2, email: 'marek.nowak@helion.pl'),
+    UserSummaryResponseDto(id: 3, email: 'k.wisniewska@helion.pl'),
+    UserSummaryResponseDto(id: 4, email: 'p.zielinski@helion.pl'),
   ];
 
   static final users = <UserResponseDto>[
@@ -81,36 +65,26 @@ abstract final class MockData {
   static final projects = <ProjectResponseDto>[
     ProjectResponseDto(
       id: 1,
-      companyId: 1,
-      userId: 1,
       name: 'Wiedźmin – Ostatnie Życzenie',
       createdAt: DateTime(2024, 1, 10),
     ),
     ProjectResponseDto(
       id: 2,
-      companyId: 1,
-      userId: 2,
       name: 'Solaris – Stanisław Lem',
       createdAt: DateTime(2024, 3, 5),
     ),
     ProjectResponseDto(
       id: 3,
-      companyId: 1,
-      userId: 1,
       name: 'Pan Tadeusz – Audiobook',
       createdAt: DateTime(2024, 6, 18),
     ),
     ProjectResponseDto(
       id: 4,
-      companyId: 1,
-      userId: 3,
       name: 'Zbrodnia i Kara – Dostojewski',
       createdAt: DateTime(2025, 1, 22),
     ),
     ProjectResponseDto(
       id: 5,
-      companyId: 1,
-      userId: 2,
       name: 'Sherlock Holmes – A Study in Scarlet',
       createdAt: DateTime(2026, 1, 10),
     ),

@@ -6,11 +6,6 @@ class MockProjectWebApi implements ProjectWebApi {
   final List<ProjectResponseDto> _projects = List.of(MockData.projects);
   int _nextId = 100;
 
-  // In a real app the current userId would come from the token.
-  // For the mock we default to userId=1 (owner).
-  static const _currentUserId = 1;
-  static const _companyId = 1;
-
   @override
   Future<ProjectResponseDto> getById(int projectId) async {
     await Future.delayed(const Duration(milliseconds: 200));
@@ -28,8 +23,6 @@ class MockProjectWebApi implements ProjectWebApi {
     await Future.delayed(const Duration(milliseconds: 400));
     final project = ProjectResponseDto(
       id: _nextId++,
-      companyId: _companyId,
-      userId: _currentUserId,
       name: name,
       createdAt: DateTime.now(),
     );
@@ -45,8 +38,6 @@ class MockProjectWebApi implements ProjectWebApi {
     final old = _projects[index];
     _projects[index] = ProjectResponseDto(
       id: old.id,
-      companyId: old.companyId,
-      userId: old.userId,
       name: newName,
       createdAt: old.createdAt,
     );

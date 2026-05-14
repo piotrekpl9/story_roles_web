@@ -5,14 +5,12 @@ class UserResponseDto {
   final String email;
   final bool isAdmin;
   final DateTime? createdAt;
-  final DateTime? updatedAt;
 
   const UserResponseDto({
     required this.id,
     required this.email,
     this.isAdmin = false,
     this.createdAt,
-    this.updatedAt,
   });
 
   factory UserResponseDto.fromJson(Map<String, dynamic> json) {
@@ -25,9 +23,6 @@ class UserResponseDto {
       createdAt: attrs['created_at'] != null
           ? DateTime.tryParse(attrs['created_at'] as String)
           : null,
-      updatedAt: attrs['updated_at'] != null
-          ? DateTime.tryParse(attrs['updated_at'] as String)
-          : null,
     );
   }
 
@@ -36,6 +31,5 @@ class UserResponseDto {
         email: email,
         isAdmin: isAdmin,
         createdAt: createdAt,
-        updatedAt: updatedAt,
       );
 }

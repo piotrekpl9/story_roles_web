@@ -11,55 +11,55 @@ class AppLocalizationsPl extends AppLocalizations {
   String get appName => 'StoryRoles';
 
   @override
-  String get login => 'Zaloguj';
+  String get login => 'Login';
 
   @override
-  String get register => 'Zarejestruj';
+  String get register => 'Register';
 
   @override
   String get email => 'Email';
 
   @override
-  String get password => 'Hasło';
+  String get password => 'Password';
 
   @override
-  String get emailRequired => 'Email jest wymagany';
+  String get emailRequired => 'Email is required';
 
   @override
-  String get enterValidEmail => 'Podaj prawidłowy email';
+  String get enterValidEmail => 'Please enter a valid email';
 
   @override
-  String get passwordRequired => 'Hasło jest wymagane';
+  String get passwordRequired => 'Password is required';
 
   @override
   String passwordRequireMinCharacters(int numberOfCharacters) {
-    return 'Hasło musi mieć co najmniej $numberOfCharacters znaków';
+    return 'Password must be at least $numberOfCharacters characters';
   }
 
   @override
-  String get trackTitle => 'Tytuł pliku';
+  String get trackTitle => 'File Title';
 
   @override
-  String get backToLogin => 'Powrót do logowania';
+  String get backToLogin => 'Back to Login';
 
   @override
-  String get registrationFailed => 'Rejestracja nie powiodła się.';
+  String get registrationFailed => 'Registration failed. Please try again.';
 
   @override
-  String get registrationSuccess => 'Rejestracja udana! Zaloguj się.';
+  String get registrationSuccess => 'Registration successful! Please log in.';
 
   @override
-  String get loginFailed => 'Logowanie nie powiodło się.';
+  String get loginFailed => 'Login failed. Please check your credentials.';
 
   @override
-  String get loginSuccess => 'Zalogowano pomyślnie!';
+  String get loginSuccess => 'Login successful!';
 
   @override
-  String get noTrackPlaying => 'Brak odtwarzanego utworu';
+  String get noTrackPlaying => 'No track playing';
 
   @override
-  String get play => 'Odtwórz';
+  String get play => 'Play';
 
   @override
-  String get pause => 'Pauza';
+  String get pause => 'Pause';
 }

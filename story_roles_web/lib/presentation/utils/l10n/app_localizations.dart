@@ -6,7 +6,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
 import 'app_localizations_en.dart';
-import 'app_localizations_pl.dart';
 
 // ignore_for_file: type=lint
 
@@ -78,7 +77,7 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
     case 'en':
       return AppLocalizationsEn();
     case 'pl':
-      return AppLocalizationsPl();
+      return AppLocalizationsEn();
   }
 
   throw FlutterError(

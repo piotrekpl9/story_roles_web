@@ -11,7 +11,6 @@ class PersistentPlayerBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Reaguje tylko gdy pojawia się/znika track — nie na pozycję
     return BlocBuilder<PlayerBloc, PlayerBlocState>(
       buildWhen: (prev, curr) => prev.hasTrack != curr.hasTrack,
       builder: (context, state) {
@@ -50,7 +49,6 @@ class _TrackInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Reaguje tylko na zmianę tracka
     return BlocBuilder<PlayerBloc, PlayerBlocState>(
       buildWhen: (prev, curr) => prev.currentTrack?.id != curr.currentTrack?.id,
       builder: (context, state) {
@@ -108,7 +106,6 @@ class _PlaybackButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Reaguje tylko na isLoading i status odtwarzania
     return BlocBuilder<PlayerBloc, PlayerBlocState>(
       buildWhen:
           (prev, curr) =>
@@ -194,7 +191,6 @@ class _Scrubber extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Ten builder reaguje na każdą zmianę pozycji — ale jest izolowany
     return BlocBuilder<PlayerBloc, PlayerBlocState>(
       buildWhen:
           (prev, curr) =>

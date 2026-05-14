@@ -26,11 +26,7 @@ void main() {
       expect(result.first.email, 'anna.kowalska@helion.pl');
     });
 
-    test('maps createdAt correctly', () async {
-      final result = await repository.getAvailableUsers();
 
-      expect(result.first.createdAt, DateTime(2022, 1, 15));
-    });
   });
 
   group('CompanyRepository.create', () {
