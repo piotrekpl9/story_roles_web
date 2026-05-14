@@ -2,6 +2,8 @@ part of 'project_bloc.dart';
 
 enum ProjectStatus { initial, loading, success, failure }
 
+enum ChapterActionStatus { idle, loading, success, failure }
+
 class ProjectState extends Equatable {
   final ProjectStatus status;
   final Project? project;
@@ -9,6 +11,7 @@ class ProjectState extends Equatable {
   final Map<int, List<Track>> tracksByChapter;
   final Set<int> generatingChapterIds;
   final List<LectorVoice> lectorVoices;
+  final ChapterActionStatus chapterActionStatus;
 
   const ProjectState({
     this.status = ProjectStatus.initial,
@@ -17,6 +20,7 @@ class ProjectState extends Equatable {
     this.tracksByChapter = const {},
     this.generatingChapterIds = const {},
     this.lectorVoices = const [],
+    this.chapterActionStatus = ChapterActionStatus.idle,
   });
 
   ProjectState copyWith({
@@ -26,6 +30,7 @@ class ProjectState extends Equatable {
     Map<int, List<Track>>? tracksByChapter,
     Set<int>? generatingChapterIds,
     List<LectorVoice>? lectorVoices,
+    ChapterActionStatus? chapterActionStatus,
   }) {
     return ProjectState(
       status: status ?? this.status,
@@ -34,9 +39,10 @@ class ProjectState extends Equatable {
       tracksByChapter: tracksByChapter ?? this.tracksByChapter,
       generatingChapterIds: generatingChapterIds ?? this.generatingChapterIds,
       lectorVoices: lectorVoices ?? this.lectorVoices,
+      chapterActionStatus: chapterActionStatus ?? this.chapterActionStatus,
     );
   }
 
   @override
-  List<Object?> get props => [status, project, chapters, tracksByChapter, generatingChapterIds, lectorVoices];
+  List<Object?> get props => [status, project, chapters, tracksByChapter, generatingChapterIds, lectorVoices, chapterActionStatus];
 }

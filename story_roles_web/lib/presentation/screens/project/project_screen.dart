@@ -71,7 +71,28 @@ class ProjectScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ProjectBloc, ProjectState>(
+    return BlocConsumer<ProjectBloc, ProjectState>(
+      listenWhen: (previous, current) =>
+          previous.chapterActionStatus != current.chapterActionStatus,
+      listener: (context, state) {
+        if (state.chapterActionStatus == ChapterActionStatus.success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Chapter created successfully'),
+              backgroundColor: Colors.green,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        } else if (state.chapterActionStatus == ChapterActionStatus.failure) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Failed to create chapter. Please try again.'),
+              backgroundColor: Colors.red,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
+      },
       builder: (context, state) {
         if (state.status == ProjectStatus.loading ||
             state.status == ProjectStatus.initial) {
@@ -117,12 +138,12 @@ class ProjectScreen extends StatelessWidget {
                       icon: Icon(
                         Icons.arrow_back_ios_new,
                         size: 14,
-                        color: AppColors.onBackground.withValues(alpha: 0.5),
+                        color: AppColors.onBackground.withValues(alpha: 0.65),
                       ),
                       label: Text(
                         'Projects',
                         style: TextStyle(
-                          color: AppColors.onBackground.withValues(alpha: 0.5),
+                          color: AppColors.onBackground.withValues(alpha: 0.65),
                           fontSize: 13,
                         ),
                       ),
@@ -161,14 +182,14 @@ class ProjectScreen extends StatelessWidget {
                         Icon(
                           Icons.calendar_today_outlined,
                           size: 13,
-                          color: AppColors.onBackground.withValues(alpha: 0.4),
+                          color: AppColors.onBackground.withValues(alpha: 0.6),
                         ),
                         const SizedBox(width: 6),
                         Text(
                           'Created ${formatDate(project.createdAt)}',
                           style: TextStyle(
                             color: AppColors.onBackground.withValues(
-                              alpha: 0.4,
+                              alpha: 0.6,
                             ),
                             fontSize: 13,
                           ),
@@ -177,14 +198,14 @@ class ProjectScreen extends StatelessWidget {
                         Icon(
                           Icons.menu_book_outlined,
                           size: 13,
-                          color: AppColors.onBackground.withValues(alpha: 0.4),
+                          color: AppColors.onBackground.withValues(alpha: 0.6),
                         ),
                         const SizedBox(width: 6),
                         Text(
                           '${state.chapters.length} chapter${state.chapters.length == 1 ? '' : 's'}',
                           style: TextStyle(
                             color: AppColors.onBackground.withValues(
-                              alpha: 0.4,
+                              alpha: 0.6,
                             ),
                             fontSize: 13,
                           ),

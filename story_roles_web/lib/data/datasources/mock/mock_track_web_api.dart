@@ -56,6 +56,14 @@ class MockTrackWebApi implements TrackWebApi {
     return words;
   }
 
+  @override
+  Future<List<ScriptWord>> getAlignment(int trackId) async {
+    await Future.delayed(const Duration(milliseconds: 200));
+    final words = MockData.scriptWords[trackId];
+    if (words == null) return const [];
+    return words;
+  }
+
   /// Called by [MockChapterWebApi] when generation is triggered.
   /// Adds a pending track for the chapter, then marks it completed after 4s.
   TrackResponseDto addPendingTracksForChapter(int chapterId, String chapterName, String narratorId) {

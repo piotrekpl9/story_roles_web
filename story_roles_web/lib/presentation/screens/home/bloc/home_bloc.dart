@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
+import 'package:story_roles_web/core/utils/result.dart';
 import 'package:story_roles_web/domain/entities/project.dart';
 import 'package:story_roles_web/domain/repositories/project_repository.dart';
 
@@ -25,28 +26,33 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   Future<void> _onLoadHome(LoadHomeEvent event, Emitter<HomeState> emit) async {
     emit(state.copyWith(status: HomeBlocStatus.loading));
-    try {
-      final projects = await _projectRepository.getAll();
-      emit(state.copyWith(status: HomeBlocStatus.success, projects: projects));
-      _pollingTimer?.cancel();
-      _pollingTimer = Timer.periodic(
-        const Duration(seconds: 60),
-        (_) => add(SilentPoolTracksEvent()),
-      );
-    } catch (e, st) {
-      debugPrint('HomeBloc error: $e\n$st');
-      emit(state.copyWith(status: HomeBlocStatus.failure));
-    }
+    final result = await _projectRepository.getAll();
+    result.fold(
+      onSuccess: (projects) {
+        emit(state.copyWith(status: HomeBlocStatus.success, projects: projects));
+        _pollingTimer?.cancel();
+        _pollingTimer = Timer.periodic(
+          const Duration(seconds: 60),
+          (_) => add(SilentPoolTracksEvent()),
+        );
+      },
+      onError: (failure) {
+        debugPrint('HomeBloc error: $failure');
+        emit(state.copyWith(status: HomeBlocStatus.failure));
+      },
+    );
   }
 
   Future<void> _onSilentPool(
     SilentPoolTracksEvent event,
     Emitter<HomeState> emit,
   ) async {
-    try {
-      final projects = await _projectRepository.getAll();
-      emit(state.copyWith(status: HomeBlocStatus.success, projects: projects));
-    } catch (_) {}
+    final result = await _projectRepository.getAll();
+    result.fold(
+      onSuccess: (projects) =>
+          emit(state.copyWith(status: HomeBlocStatus.success, projects: projects)),
+      onError: (_) {},
+    );
   }
 
   Future<void> _onRenameProject(
@@ -54,10 +60,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     Emitter<HomeState> emit,
   ) async {
     await _projectRepository.rename(event.projectId, event.newName);
-    try {
-      final projects = await _projectRepository.getAll();
-      emit(state.copyWith(projects: projects));
-    } catch (_) {}
+    final result = await _projectRepository.getAll();
+    result.fold(
+      onSuccess: (projects) => emit(state.copyWith(projects: projects)),
+      onError: (_) {},
+    );
   }
 
   Future<void> _onDeleteProject(
@@ -73,8 +80,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     CreateProjectEvent event,
     Emitter<HomeState> emit,
   ) async {
-    final project = await _projectRepository.create(name: event.name);
-    emit(state.copyWith(projects: [...state.projects, project]));
+    final result = await _projectRepository.create(name: event.name);
+    result.fold(
+      onSuccess: (project) =>
+          emit(state.copyWith(projects: [...state.projects, project])),
+      onError: (_) {},
+    );
   }
 
   @override

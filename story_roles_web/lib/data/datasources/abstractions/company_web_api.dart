@@ -15,7 +15,7 @@ abstract class CompanyWebApi {
   });
   Future<void> deleteUser(int userId);
   Future<List<UserSummaryResponseDto>> getAvailableUsers();
-  Future<CompanyResponseDto> create({required String name});
+  Future<CompanyResponseDto> create({required String name, required int allowedUsers});
   Future<void> update(int id, {String? name});
   Future<void> delete(int id);
   Future<void> assignUser(int companyId, int userId);

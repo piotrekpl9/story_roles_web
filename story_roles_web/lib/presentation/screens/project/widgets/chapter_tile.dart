@@ -106,7 +106,7 @@ class _ChapterTileState extends State<ChapterTile> {
                       duration: const Duration(milliseconds: 150),
                       child: Icon(
                         Icons.chevron_right,
-                        color: AppColors.onBackground.withValues(alpha: 0.5),
+                        color: AppColors.onBackground.withValues(alpha: 0.65),
                         size: 20,
                       ),
                     ),
@@ -156,7 +156,7 @@ class _ChapterTileState extends State<ChapterTile> {
                                 formatDate(widget.chapter.createdAt),
                                 style: TextStyle(
                                   color: AppColors.onBackground.withValues(
-                                    alpha: 0.4,
+                                    alpha: 0.6,
                                   ),
                                   fontSize: 12,
                                 ),
@@ -177,7 +177,7 @@ class _ChapterTileState extends State<ChapterTile> {
                                   Icons.headphones,
                                   size: 12,
                                   color: AppColors.onBackground.withValues(
-                                    alpha: 0.4,
+                                    alpha: 0.6,
                                   ),
                                 ),
                                 const SizedBox(width: 4),
@@ -185,7 +185,7 @@ class _ChapterTileState extends State<ChapterTile> {
                                   '${widget.tracks.length} track${widget.tracks.length == 1 ? '' : 's'}',
                                   style: TextStyle(
                                     color: AppColors.onBackground.withValues(
-                                      alpha: 0.4,
+                                      alpha: 0.6,
                                     ),
                                     fontSize: 12,
                                   ),
@@ -306,14 +306,14 @@ class _ChapterTileState extends State<ChapterTile> {
                     child: Icon(
                       Icons.chevron_right,
                       size: 15,
-                      color: AppColors.onBackground.withValues(alpha: 0.4),
+                      color: AppColors.onBackground.withValues(alpha: 0.6),
                     ),
                   ),
                   const SizedBox(width: 4),
                   Text(
                     'Source text',
                     style: TextStyle(
-                      color: AppColors.onBackground.withValues(alpha: 0.5),
+                      color: AppColors.onBackground.withValues(alpha: 0.65),
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 0.4,
@@ -365,7 +365,7 @@ class _ChapterTileState extends State<ChapterTile> {
                             ? 'No tracks yet — click "Generate audio" to start.'
                             : 'Upload a .txt file first to generate audio.',
                         style: TextStyle(
-                          color: AppColors.onBackground.withValues(alpha: 0.35),
+                          color: AppColors.onBackground.withValues(alpha: 0.55),
                           fontSize: 13,
                         ),
                       ),
@@ -378,7 +378,7 @@ class _ChapterTileState extends State<ChapterTile> {
                             Text(
                               'Tracks',
                               style: TextStyle(
-                                color: AppColors.onBackground.withValues(alpha: 0.4),
+                                color: AppColors.onBackground.withValues(alpha: 0.6),
                                 fontSize: 11,
                                 fontWeight: FontWeight.w600,
                                 letterSpacing: 0.4,
@@ -397,7 +397,7 @@ class _ChapterTileState extends State<ChapterTile> {
                                         ? Icons.arrow_downward
                                         : Icons.arrow_upward,
                                     size: 12,
-                                    color: AppColors.onBackground.withValues(alpha: 0.4),
+                                    color: AppColors.onBackground.withValues(alpha: 0.6),
                                   ),
                                 ),
                               ),
@@ -509,7 +509,7 @@ class _NarratorDialogState extends State<_NarratorDialog> {
                 Icon(
                   isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
                   size: 18,
-                  color: isSelected ? AppColors.primary : AppColors.onBackground.withValues(alpha: 0.4),
+                  color: isSelected ? AppColors.primary : AppColors.onBackground.withValues(alpha: 0.6),
                 ),
                 const SizedBox(width: 8),
                 Icon(
@@ -530,7 +530,7 @@ class _NarratorDialogState extends State<_NarratorDialog> {
                         Text(
                           v.description,
                           style: TextStyle(
-                            color: AppColors.onBackground.withValues(alpha: 0.45),
+                            color: AppColors.onBackground.withValues(alpha: 0.6),
                             fontSize: 11,
                           ),
                         ),

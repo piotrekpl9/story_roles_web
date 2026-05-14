@@ -73,12 +73,12 @@ class CompanyWebApiImpl implements CompanyWebApi {
   }
 
   @override
-  Future<CompanyResponseDto> create({required String name}) async {
+  Future<CompanyResponseDto> create({required String name, required int allowedUsers}) async {
     final response = await dio.post(
       DataConsts.endpoints.companies,
-      data: {'company': {'name': name}},
+      data: {'name': name, 'allowed_users': allowedUsers, 'active': true},
     );
-    return CompanyResponseDto.fromJson(response.data['data'] as Map<String, dynamic>);
+    return CompanyResponseDto.fromJson(response.data['data']['company'] as Map<String, dynamic>);
   }
 
   @override

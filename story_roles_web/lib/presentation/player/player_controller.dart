@@ -22,7 +22,7 @@ class PlayerController {
     _player.onPositionChanged.listen((p) {
       _position = p;
       final now = DateTime.now();
-      if (now.difference(_lastPositionEmit).inMilliseconds >= 500) {
+      if (now.difference(_lastPositionEmit).inMilliseconds >= 100) {
         _lastPositionEmit = now;
         _emitState();
       }

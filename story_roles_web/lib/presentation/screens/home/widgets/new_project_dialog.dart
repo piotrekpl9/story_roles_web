@@ -29,7 +29,7 @@ class _NewProjectDialogState extends State<NewProjectDialog> {
         decoration: InputDecoration(
           hintText: 'Project name',
           hintStyle: TextStyle(
-            color: AppColors.onBackground.withValues(alpha: 0.4),
+            color: AppColors.onBackground.withValues(alpha: 0.6),
           ),
           enabledBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: AppColors.divider),

@@ -9,7 +9,7 @@ abstract class CompanyRepository {
   Future<List<User>> getUsersByCompany(int companyId);
   Future<List<Company>> getAll();
   Future<List<UserSummary>> getAvailableUsers();
-  Future<Company> create({required String name});
+  Future<Company> create({required String name, required int allowedUsers});
   Future<void> update(int id, {String? name});
   Future<void> delete(int id);
   Future<void> assignUser(int companyId, int userId);

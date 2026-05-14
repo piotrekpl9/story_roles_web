@@ -24,6 +24,7 @@ class _CompaniesScreenState extends State<CompaniesScreen> {
 
   void _showCreateDialog(BuildContext context) {
     final nameController = TextEditingController();
+    final allowedUsersController = TextEditingController();
     String? validationError;
 
     showDialog<void>(
@@ -63,6 +64,23 @@ class _CompaniesScreenState extends State<CompaniesScreen> {
                       }
                     },
                   ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: allowedUsersController,
+                    keyboardType: TextInputType.number,
+                    style: const TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      labelText: 'Allowed users',
+                      labelStyle:
+                          TextStyle(color: AppColors.onBackground.withValues(alpha: 0.6)),
+                      filled: true,
+                      fillColor: Colors.white.withValues(alpha: 0.06),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                  ),
                 ],
               ),
               actions: [
@@ -70,29 +88,19 @@ class _CompaniesScreenState extends State<CompaniesScreen> {
                   onPressed: () => Navigator.of(dialogContext).pop(),
                   child: const Text('Cancel'),
                 ),
-                BlocListener<CompaniesBloc, CompaniesState>(
-                  listenWhen: (prev, curr) =>
-                      curr.actionError != null &&
-                      prev.actionError != curr.actionError,
-                  listener: (_, state) {
+                FilledButton(
+                  onPressed: () {
+                    final name = nameController.text.trim();
+                    final allowedUsers = int.tryParse(allowedUsersController.text.trim()) ?? 10;
+                    if (name.isEmpty) {
+                      setDialogState(
+                          () => validationError = 'Name cannot be empty.');
+                      return;
+                    }
+                    context.read<CompaniesBloc>().add(CreateCompanyEvent(name, allowedUsers));
                     Navigator.of(dialogContext).pop();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(state.actionError!)),
-                    );
                   },
-                  child: FilledButton(
-                    onPressed: () {
-                      final name = nameController.text.trim();
-                      if (name.isEmpty) {
-                        setDialogState(
-                            () => validationError = 'Name cannot be empty.');
-                        return;
-                      }
-                      context.read<CompaniesBloc>().add(CreateCompanyEvent(name));
-                      Navigator.of(dialogContext).pop();
-                    },
-                    child: const Text('Create'),
-                  ),
+                  child: const Text('Create'),
                 ),
               ],
             );
@@ -137,14 +145,30 @@ class _CompaniesScreenState extends State<CompaniesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<CompaniesBloc, CompaniesState>(
-      listenWhen: (prev, curr) =>
-          curr.actionError != null && prev.actionError != curr.actionError,
-      listener: (context, state) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(state.actionError!)),
-        );
-      },
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<CompaniesBloc, CompaniesState>(
+          listenWhen: (prev, curr) =>
+              curr.actionError != null && prev.actionError != curr.actionError,
+          listener: (context, state) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.actionError!)),
+            );
+          },
+        ),
+        BlocListener<CompaniesBloc, CompaniesState>(
+          listenWhen: (prev, curr) =>
+              curr.actionSuccess != null && prev.actionSuccess != curr.actionSuccess,
+          listener: (context, state) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.actionSuccess!, style: const TextStyle(color: Colors.white)),
+                backgroundColor: Colors.green.shade700,
+              ),
+            );
+          },
+        ),
+      ],
       child: BlocBuilder<CompaniesBloc, CompaniesState>(
         builder: (context, state) {
           if (state.status == CompaniesStatus.loading ||
@@ -199,11 +223,11 @@ class _CompaniesScreenState extends State<CompaniesScreen> {
                         decoration: InputDecoration(
                           hintText: 'Search...',
                           hintStyle: TextStyle(
-                            color: AppColors.onBackground.withValues(alpha: 0.4),
+                            color: AppColors.onBackground.withValues(alpha: 0.6),
                           ),
                           prefixIcon: Icon(
                             Icons.search,
-                            color: AppColors.onBackground.withValues(alpha: 0.5),
+                            color: AppColors.onBackground.withValues(alpha: 0.65),
                           ),
                           suffixIcon: _searchController.text.isNotEmpty
                               ? IconButton(

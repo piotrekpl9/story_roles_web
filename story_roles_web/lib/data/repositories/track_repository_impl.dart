@@ -12,42 +12,72 @@ class TrackRepositoryImpl implements TrackRepository {
   TrackRepositoryImpl({required this.trackWebApi});
 
   @override
-  Future<List<Track>> getAll({bool forceRefresh = false}) async {
-    final dtos = await trackWebApi.getAll();
-    return dtos.map((e) => e.toDomain()).toList();
+  Future<Result<List<Track>>> getAll({bool forceRefresh = false}) async {
+    try {
+      final dtos = await trackWebApi.getAll();
+      return Success(dtos.map((e) => e.toDomain()).toList());
+    } catch (_) {
+      return Error(const ServerFailure('Failed to load tracks'));
+    }
   }
 
   @override
-  Future<List<Track>> getByChapter(int chapterId) async {
-    final dtos = await trackWebApi.getByChapter(chapterId);
-    return dtos.map((e) => e.toDomain()).toList();
+  Future<Result<List<Track>>> getByChapter(int chapterId) async {
+    try {
+      final dtos = await trackWebApi.getByChapter(chapterId);
+      return Success(dtos.map((e) => e.toDomain()).toList());
+    } catch (_) {
+      return Error(const ServerFailure('Failed to load tracks for chapter'));
+    }
   }
 
   @override
-  Future<Result> renameTrack(int trackId, String newTitle) async {
+  Future<Result<void>> renameTrack(int trackId, String newTitle) async {
     try {
       await trackWebApi.rename(trackId, newTitle);
-      return Success(());
+      return const Success(null);
     } catch (_) {
       return Error(const ServerFailure('Failed to rename track'));
     }
   }
 
   @override
-  Future<Result> deleteTrack(int trackId) async {
+  Future<Result<void>> deleteTrack(int trackId) async {
     try {
       await trackWebApi.delete(trackId);
-      return Success(());
+      return const Success(null);
     } catch (_) {
       return Error(const ServerFailure('Failed to delete track'));
     }
   }
 
   @override
-  Future<Map<int, TrackProgress>> getAudioProgresses() =>
-      trackWebApi.getAudioProgresses();
+  Future<Result<Map<int, TrackProgress>>> getAudioProgresses() async {
+    try {
+      final progresses = await trackWebApi.getAudioProgresses();
+      return Success(progresses);
+    } catch (_) {
+      return Error(const ServerFailure('Failed to load audio progresses'));
+    }
+  }
 
   @override
-  Future<List<ScriptWord>> getScript(int trackId) =>
-      trackWebApi.getScript(trackId);
+  Future<Result<List<ScriptWord>>> getScript(int trackId) async {
+    try {
+      final words = await trackWebApi.getScript(trackId);
+      return Success(words);
+    } catch (_) {
+      return Error(const ServerFailure('Failed to load script'));
+    }
+  }
+
+  @override
+  Future<Result<List<ScriptWord>>> getAlignment(int trackId) async {
+    try {
+      final words = await trackWebApi.getAlignment(trackId);
+      return Success(words);
+    } catch (_) {
+      return Error(const ServerFailure('Failed to load alignment'));
+    }
+  }
 }

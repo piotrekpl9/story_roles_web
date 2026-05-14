@@ -24,7 +24,7 @@ class WordChip extends StatelessWidget {
       weight = FontWeight.w700;
       fontSize = 22;
     } else if (isPast) {
-      color = AppColors.onBackground.withValues(alpha: 0.4);
+      color = AppColors.onBackground.withValues(alpha: 0.6);
       weight = FontWeight.w400;
       fontSize = 20;
     } else {

@@ -23,6 +23,7 @@ String getAudioProgress(int trackId) =>
   String generateChapterTracks(int projectId, int chapterId) =>
       '/api/v1/projects/$projectId/chapters/$chapterId/generate';
   String getScript(int trackId) => '/api/v1/tracks/$trackId/script';
+  String getAlignment(int trackId) => '/api/v1/tracks/$trackId/alignment';
   final String getLectorVoices = '/api/v1/lector_voices';
   String lectorVoiceSample(String id) => '/api/v1/lector_voices/$id/sample';
   final String getCompany = '/api/v1/companies/mine';

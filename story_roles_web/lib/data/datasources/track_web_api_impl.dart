@@ -55,6 +55,20 @@ class TrackWebApiImpl implements TrackWebApi {
   }
 
   @override
+  Future<List<ScriptWord>> getAlignment(int trackId) async {
+    final response =
+        await dio.get(DataConsts.endpoints.getAlignment(trackId));
+    final words = response.data['words'] as List? ?? [];
+    return words
+        .map((e) => ScriptWord(
+              word: e['word'] as String,
+              startMs: (e['start_ms'] as num).toInt(),
+              endMs: (e['end_ms'] as num).toInt(),
+            ))
+        .toList();
+  }
+
+  @override
   Future<Map<int, TrackProgress>> getAudioProgresses() async {
     final response = await dio.get(DataConsts.endpoints.getAudioProgresses);
     final list = response.data['data']['audio_progresses'] as List? ?? [];

@@ -15,7 +15,7 @@ class InfoRow extends StatelessWidget {
         Text(
           label,
           style: TextStyle(
-            color: AppColors.onBackground.withValues(alpha: 0.6),
+            color: AppColors.onBackground.withValues(alpha: 0.75),
             fontSize: 12,
             letterSpacing: 0.5,
           ),

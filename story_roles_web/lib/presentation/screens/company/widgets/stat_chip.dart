@@ -21,13 +21,13 @@ class StatChip extends StatelessWidget {
         Icon(
           icon,
           size: 16,
-          color: AppColors.onBackground.withValues(alpha: 0.45),
+          color: AppColors.onBackground.withValues(alpha: 0.65),
         ),
         const SizedBox(width: 6),
         Text(
           label,
           style: TextStyle(
-            color: AppColors.onBackground.withValues(alpha: 0.45),
+            color: AppColors.onBackground.withValues(alpha: 0.65),
             fontSize: 13,
           ),
         ),

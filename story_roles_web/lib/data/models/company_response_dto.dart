@@ -1,3 +1,4 @@
+import 'package:story_roles_web/data/models/json_api_parser.dart';
 import 'package:story_roles_web/domain/entities/company.dart';
 
 class CompanyResponseDto {
@@ -16,7 +17,7 @@ class CompanyResponseDto {
   });
 
   factory CompanyResponseDto.fromJson(Map<String, dynamic> json) {
-    final attrs = (json['attributes'] as Map<String, dynamic>?) ?? json;
+    final attrs = JsonApiParser.extractAttributes(json);
     return CompanyResponseDto(
       id: int.parse(attrs['id'].toString()),
       name: attrs['name'] as String,

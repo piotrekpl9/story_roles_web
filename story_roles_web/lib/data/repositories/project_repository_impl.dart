@@ -10,38 +10,50 @@ class ProjectRepositoryImpl implements ProjectRepository {
   ProjectRepositoryImpl({required this.projectWebApi});
 
   @override
-  Future<List<Project>> getAll() async {
-    final dtos = await projectWebApi.getAll();
-    return dtos.map((e) => e.toDomain()).toList();
+  Future<Result<List<Project>>> getAll() async {
+    try {
+      final dtos = await projectWebApi.getAll();
+      return Success(dtos.map((e) => e.toDomain()).toList());
+    } catch (_) {
+      return Error(const ServerFailure('Failed to load projects'));
+    }
   }
 
   @override
-  Future<Project> getById(int projectId) async {
-    final dto = await projectWebApi.getById(projectId);
-    return dto.toDomain();
+  Future<Result<Project>> getById(int projectId) async {
+    try {
+      final dto = await projectWebApi.getById(projectId);
+      return Success(dto.toDomain());
+    } catch (_) {
+      return Error(const ServerFailure('Failed to load project'));
+    }
   }
 
   @override
-  Future<Project> create({required String name}) async {
-    final dto = await projectWebApi.create(name: name);
-    return dto.toDomain();
+  Future<Result<Project>> create({required String name}) async {
+    try {
+      final dto = await projectWebApi.create(name: name);
+      return Success(dto.toDomain());
+    } catch (_) {
+      return Error(const ServerFailure('Failed to create project'));
+    }
   }
 
   @override
-  Future<Result> rename(int projectId, String newName) async {
+  Future<Result<void>> rename(int projectId, String newName) async {
     try {
       await projectWebApi.rename(projectId, newName);
-      return Success(());
+      return const Success(null);
     } catch (_) {
       return Error(const ServerFailure('Failed to rename project'));
     }
   }
 
   @override
-  Future<Result> delete(int projectId) async {
+  Future<Result<void>> delete(int projectId) async {
     try {
       await projectWebApi.delete(projectId);
-      return Success(());
+      return const Success(null);
     } catch (_) {
       return Error(const ServerFailure('Failed to delete project'));
     }

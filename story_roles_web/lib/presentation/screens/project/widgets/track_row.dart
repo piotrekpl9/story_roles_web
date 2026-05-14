@@ -62,7 +62,7 @@ class _TrackRowState extends State<TrackRow>
                   size: 18,
                   color: _hovered && ready
                       ? AppColors.primary
-                      : AppColors.onBackground.withValues(alpha: 0.4),
+                      : AppColors.onBackground.withValues(alpha: 0.6),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -82,10 +82,34 @@ class _TrackRowState extends State<TrackRow>
                 Text(
                   formatDateTime(widget.track.attributes.createdAt),
                   style: TextStyle(
-                    color: AppColors.onBackground.withValues(alpha: 0.35),
+                    color: AppColors.onBackground.withValues(alpha: 0.55),
                     fontSize: 11,
                   ),
                 ),
+                if (widget.track.attributes.lectorVoice != null) ...[
+                  const SizedBox(width: 12),
+                  Icon(Icons.person_outline, size: 12, color: AppColors.onBackground.withValues(alpha: 0.55)),
+                  const SizedBox(width: 4),
+                  Text(
+                    widget.track.attributes.lectorVoice!,
+                    style: TextStyle(
+                      color: AppColors.onBackground.withValues(alpha: 0.55),
+                      fontSize: 11,
+                    ),
+                  ),
+                ],
+                if (widget.track.attributes.emotion != null) ...[
+                  const SizedBox(width: 12),
+                  Icon(Icons.mood, size: 12, color: AppColors.onBackground.withValues(alpha: 0.55)),
+                  const SizedBox(width: 4),
+                  Text(
+                    widget.track.attributes.emotion!,
+                    style: TextStyle(
+                      color: AppColors.onBackground.withValues(alpha: 0.55),
+                      fontSize: 11,
+                    ),
+                  ),
+                ],
                 const SizedBox(width: 16),
                 if (ready)
                   const Text(

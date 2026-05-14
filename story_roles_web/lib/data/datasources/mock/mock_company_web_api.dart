@@ -80,12 +80,12 @@ class MockCompanyWebApi implements CompanyWebApi {
   }
 
   @override
-  Future<CompanyResponseDto> create({required String name}) async {
+  Future<CompanyResponseDto> create({required String name, required int allowedUsers}) async {
     await Future.delayed(const Duration(milliseconds: 400));
     final company = CompanyResponseDto(
       id: _nextCompanyId++,
       name: name,
-      allowedUsers: 0,
+      allowedUsers: allowedUsers,
       active: true,
       createdAt: DateTime.now(),
     );

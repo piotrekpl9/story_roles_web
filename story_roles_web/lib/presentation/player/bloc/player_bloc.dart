@@ -1,6 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:story_roles_web/core/utils/result.dart';
 import 'package:story_roles_web/data/services/audio_progress_service.dart';
 import 'package:story_roles_web/domain/entities/player_state.dart';
+import 'package:story_roles_web/domain/entities/script_word.dart';
 import 'package:story_roles_web/domain/repositories/track_audio_source.dart';
 import 'package:story_roles_web/domain/repositories/track_repository.dart';
 import 'package:story_roles_web/presentation/player/bloc/player_bloc_state.dart';
@@ -64,7 +66,15 @@ class PlayerBloc extends Bloc<PlayerEvent, PlayerBlocState> {
         getPlayerState: () => _currentPlayerState,
       );
 
-      final script = await _trackRepository.getScript(event.track.id);
+      final scriptResult = await _trackRepository.getScript(event.track.id);
+      List<ScriptWord>? script = scriptResult.dataOrNull;
+
+      if (script == null || script.isEmpty) {
+        final alignmentResult =
+            await _trackRepository.getAlignment(event.track.id);
+        script = alignmentResult.dataOrNull;
+      }
+
       emit(state.copyWith(isLoading: false, script: script));
     } catch (e) {
       emit(state.copyWith(

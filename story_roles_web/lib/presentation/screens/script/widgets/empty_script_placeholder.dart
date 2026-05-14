@@ -15,7 +15,7 @@ class EmptyScriptPlaceholder extends StatelessWidget {
               : Text(
                 'No script available',
                 style: TextStyle(
-                  color: AppColors.onBackground.withValues(alpha: 0.4),
+                  color: AppColors.onBackground.withValues(alpha: 0.6),
                   fontSize: 14,
                 ),
               ),

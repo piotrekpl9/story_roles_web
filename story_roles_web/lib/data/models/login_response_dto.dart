@@ -1,3 +1,5 @@
+import 'package:story_roles_web/data/models/json_api_parser.dart';
+
 class LoginResponseDto {
   final String token;
   final String email;
@@ -10,11 +12,12 @@ class LoginResponseDto {
   });
 
   factory LoginResponseDto.fromJson(Map<String, dynamic> json) {
+    final attrs = JsonApiParser.extractAttributes(json);
     return LoginResponseDto(
-      token: json['token'] as String? ?? '',
-      email: json['email'] as String,
-      createdAt: json['created_at'] != null
-          ? DateTime.tryParse(json['created_at'] as String)
+      token: attrs['token'] as String? ?? '',
+      email: attrs['email'] as String,
+      createdAt: attrs['created_at'] != null
+          ? DateTime.tryParse(attrs['created_at'] as String)
           : null,
     );
   }

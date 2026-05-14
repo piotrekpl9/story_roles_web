@@ -79,3 +79,11 @@ class GenerateTracksEvent extends ProjectEvent {
   @override
   List<Object> get props => [projectId, chapterId, lectorVoice, emotion];
 }
+
+class SilentRefreshProjectEvent extends ProjectEvent {
+  final int projectId;
+  const SilentRefreshProjectEvent(this.projectId);
+
+  @override
+  List<Object> get props => [projectId];
+}

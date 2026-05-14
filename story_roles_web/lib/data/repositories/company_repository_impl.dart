@@ -47,8 +47,8 @@ class CompanyRepositoryImpl implements CompanyRepository {
   }
 
   @override
-  Future<Company> create({required String name}) async {
-    final dto = await _companyWebApi.create(name: name);
+  Future<Company> create({required String name, required int allowedUsers}) async {
+    final dto = await _companyWebApi.create(name: name, allowedUsers: allowedUsers);
     return dto.toDomain();
   }
 

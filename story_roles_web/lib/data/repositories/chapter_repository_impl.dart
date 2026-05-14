@@ -13,9 +13,13 @@ class ChapterRepositoryImpl implements ChapterRepository {
   ChapterRepositoryImpl({required this.chapterWebApi});
 
   @override
-  Future<List<Chapter>> getAll(int projectId) async {
-    final dtos = await chapterWebApi.getAll(projectId);
-    return dtos.map((e) => e.toDomain()).toList();
+  Future<Result<List<Chapter>>> getAll(int projectId) async {
+    try {
+      final dtos = await chapterWebApi.getAll(projectId);
+      return Success(dtos.map((e) => e.toDomain()).toList());
+    } catch (_) {
+      return Error(const ServerFailure('Failed to load chapters'));
+    }
   }
 
   @override
@@ -41,30 +45,30 @@ class ChapterRepositoryImpl implements ChapterRepository {
   }
 
   @override
-  Future<Result> rename(int chapterId, String newName) async {
+  Future<Result<void>> rename(int chapterId, String newName) async {
     try {
       await chapterWebApi.rename(chapterId, newName);
-      return Success(());
+      return const Success(null);
     } catch (_) {
       return Error(const ServerFailure('Failed to rename chapter'));
     }
   }
 
   @override
-  Future<Result> updateContent(int chapterId, String content) async {
+  Future<Result<void>> updateContent(int chapterId, String content) async {
     try {
       await chapterWebApi.updateContent(chapterId, content);
-      return Success(());
+      return const Success(null);
     } catch (_) {
       return Error(const ServerFailure('Failed to update chapter content'));
     }
   }
 
   @override
-  Future<Result> delete(int chapterId) async {
+  Future<Result<void>> delete(int chapterId) async {
     try {
       await chapterWebApi.delete(chapterId);
-      return Success(());
+      return const Success(null);
     } catch (_) {
       return Error(const ServerFailure('Failed to delete chapter'));
     }

@@ -5,7 +5,7 @@ import 'package:story_roles_web/domain/entities/chapter.dart';
 import 'package:story_roles_web/domain/entities/track.dart';
 
 abstract class ChapterRepository {
-  Future<List<Chapter>> getAll(int projectId);
+  Future<Result<List<Chapter>>> getAll(int projectId);
   Future<Result<Chapter>> create({
     required int projectId,
     required String name,
@@ -13,8 +13,8 @@ abstract class ChapterRepository {
     required String fileName,
     required String content,
   });
-  Future<Result> rename(int chapterId, String newName);
-  Future<Result> updateContent(int chapterId, String content);
-  Future<Result> delete(int chapterId);
+  Future<Result<void>> rename(int chapterId, String newName);
+  Future<Result<void>> updateContent(int chapterId, String content);
+  Future<Result<void>> delete(int chapterId);
   Future<Result<Track>> generateTracks(int projectId, int chapterId, String lectorVoice, String emotion);
 }

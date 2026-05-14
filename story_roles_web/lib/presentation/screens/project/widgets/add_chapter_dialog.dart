@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
@@ -36,7 +37,7 @@ class _AddChapterDialogState extends State<AddChapterDialog> {
         final bytes = result.files.single.bytes!;
         setState(() {
           _fileName = result.files.single.name;
-          _fileContent = String.fromCharCodes(bytes);
+          _fileContent = utf8.decode(bytes);
           _fileBytes = bytes;
         });
       }
@@ -68,11 +69,11 @@ class _AddChapterDialogState extends State<AddChapterDialog> {
               decoration: InputDecoration(
                 labelText: 'Chapter name',
                 labelStyle: TextStyle(
-                  color: AppColors.onBackground.withValues(alpha: 0.5),
+                  color: AppColors.onBackground.withValues(alpha: 0.65),
                 ),
                 hintText: 'e.g. Chapter 1 – The Beginning',
                 hintStyle: TextStyle(
-                  color: AppColors.onBackground.withValues(alpha: 0.3),
+                  color: AppColors.onBackground.withValues(alpha: 0.5),
                 ),
                 enabledBorder: UnderlineInputBorder(
                   borderSide: BorderSide(color: AppColors.divider),
@@ -126,7 +127,7 @@ class _AddChapterDialogState extends State<AddChapterDialog> {
                       color:
                           _fileContent != null
                               ? AppColors.primary
-                              : AppColors.onBackground.withValues(alpha: 0.4),
+                              : AppColors.onBackground.withValues(alpha: 0.6),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
@@ -161,7 +162,7 @@ class _AddChapterDialogState extends State<AddChapterDialog> {
                         icon: Icon(
                           Icons.close,
                           size: 16,
-                          color: AppColors.onBackground.withValues(alpha: 0.4),
+                          color: AppColors.onBackground.withValues(alpha: 0.6),
                         ),
                         onPressed:
                             () => setState(() {
@@ -182,7 +183,7 @@ class _AddChapterDialogState extends State<AddChapterDialog> {
               Text(
                 '${_fileContent!.length} characters',
                 style: TextStyle(
-                  color: AppColors.onBackground.withValues(alpha: 0.35),
+                  color: AppColors.onBackground.withValues(alpha: 0.55),
                   fontSize: 11,
                 ),
               ),

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:story_roles_web/core/consts.dart';
@@ -31,9 +33,9 @@ import 'package:story_roles_web/data/repositories/company_repository_impl.dart';
 import 'package:story_roles_web/data/repositories/lector_voice_repository_impl.dart';
 import 'package:story_roles_web/data/repositories/project_repository_impl.dart';
 import 'package:story_roles_web/data/repositories/track_repository_impl.dart';
-import 'package:story_roles_web/data/usecases/auth/login.dart';
-import 'package:story_roles_web/data/usecases/auth/logout.dart';
-import 'package:story_roles_web/data/usecases/auth/register.dart';
+import 'package:story_roles_web/domain/usecases/auth/login.dart';
+import 'package:story_roles_web/domain/usecases/auth/logout.dart';
+import 'package:story_roles_web/domain/usecases/auth/register.dart';
 import 'package:story_roles_web/domain/repositories/auth_repository.dart';
 import 'package:story_roles_web/domain/repositories/chapter_repository.dart';
 import 'package:story_roles_web/domain/repositories/company_repository.dart';
@@ -71,6 +73,8 @@ class Injector {
       ..connectTimeout = const Duration(seconds: 30)
       ..followRedirects = true
       ..validateStatus = (status) => status != null && status < 500;
+    dio.options.responseDecoder =
+        (bytes, request, response) => utf8.decode(bytes, allowMalformed: false);
     dio.interceptors.add(TokenInterceptor(storageDataSource: _getIt()));
     final unauthorizedInterceptor = UnauthorizedInterceptor(
       storageDataSource: _getIt(),

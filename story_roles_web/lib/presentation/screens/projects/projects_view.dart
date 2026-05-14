@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:story_roles_web/domain/entities/project.dart';
+import 'package:story_roles_web/presentation/screens/auth/bloc/auth_bloc.dart';
 import 'package:story_roles_web/presentation/screens/projects/bloc/projects_bloc.dart';
 import 'package:story_roles_web/presentation/screens/projects/widgets/list_divider.dart';
 import 'package:story_roles_web/presentation/screens/projects/widgets/new_project_dialog.dart';
@@ -52,7 +53,7 @@ class _ProjectsViewState extends State<ProjectsView> {
           decoration: InputDecoration(
             hintText: 'Project name',
             hintStyle: TextStyle(
-              color: AppColors.onBackground.withValues(alpha: 0.4),
+              color: AppColors.onBackground.withValues(alpha: 0.6),
             ),
             enabledBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: AppColors.divider),
@@ -135,6 +136,37 @@ class _ProjectsViewState extends State<ProjectsView> {
 
   @override
   Widget build(BuildContext context) {
+    final hasCompany = context.select((AuthBloc b) => b.state.companyId) != null;
+
+    if (!hasCompany) {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.business_outlined,
+              size: 48,
+              color: AppColors.onBackground.withValues(alpha: 0.3),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'No company assigned',
+              style: TextStyle(color: Colors.white70, fontSize: 18),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'You need to be added to a company before you can\nview or create projects. Contact your administrator.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: AppColors.onBackground.withValues(alpha: 0.65),
+                fontSize: 14,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
     return BlocBuilder<ProjectsBloc, ProjectsState>(
       builder: (blocCtx, state) {
         if (state.status == ProjectsBlocStatus.loading ||
@@ -206,11 +238,11 @@ class _ProjectsViewState extends State<ProjectsView> {
                       decoration: InputDecoration(
                         hintText: 'Search...',
                         hintStyle: TextStyle(
-                          color: AppColors.onBackground.withValues(alpha: 0.4),
+                          color: AppColors.onBackground.withValues(alpha: 0.6),
                         ),
                         prefixIcon: Icon(
                           Icons.search,
-                          color: AppColors.onBackground.withValues(alpha: 0.5),
+                          color: AppColors.onBackground.withValues(alpha: 0.65),
                         ),
                         suffixIcon: _searchController.text.isNotEmpty
                             ? IconButton(
@@ -252,7 +284,7 @@ class _ProjectsViewState extends State<ProjectsView> {
                     child: Text(
                       'Name',
                       style: TextStyle(
-                        color: AppColors.onBackground.withValues(alpha: 0.4),
+                        color: AppColors.onBackground.withValues(alpha: 0.6),
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0.8,
@@ -264,7 +296,7 @@ class _ProjectsViewState extends State<ProjectsView> {
                     child: Text(
                       'Created',
                       style: TextStyle(
-                        color: AppColors.onBackground.withValues(alpha: 0.4),
+                        color: AppColors.onBackground.withValues(alpha: 0.6),
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0.8,

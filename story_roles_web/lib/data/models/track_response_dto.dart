@@ -1,4 +1,5 @@
 import 'package:story_roles_web/data/models/attributes_response_dto.dart';
+import 'package:story_roles_web/data/models/json_api_parser.dart';
 import 'package:story_roles_web/domain/entities/track.dart';
 
 class TrackResponseDto {
@@ -9,7 +10,7 @@ class TrackResponseDto {
   TrackResponseDto({required this.id, this.chapterId, required this.attributesResponseDto});
 
   factory TrackResponseDto.fromJson(Map<String, dynamic> json) {
-    final attrs = json['attributes'] as Map<String, dynamic>;
+    final attrs = JsonApiParser.extractAttributes(json);
     return TrackResponseDto(
       id: int.parse(json['id'].toString()),
       chapterId: (attrs['chapter_id'] as num?)?.toInt(),

@@ -52,7 +52,7 @@ class _HomeViewState extends State<HomeView> {
           decoration: InputDecoration(
             hintText: 'Project name',
             hintStyle: TextStyle(
-              color: AppColors.onBackground.withValues(alpha: 0.4),
+              color: AppColors.onBackground.withValues(alpha: 0.6),
             ),
             enabledBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: AppColors.divider),
@@ -204,11 +204,11 @@ class _HomeViewState extends State<HomeView> {
                       decoration: InputDecoration(
                         hintText: 'Search...',
                         hintStyle: TextStyle(
-                          color: AppColors.onBackground.withValues(alpha: 0.4),
+                          color: AppColors.onBackground.withValues(alpha: 0.6),
                         ),
                         prefixIcon: Icon(
                           Icons.search,
-                          color: AppColors.onBackground.withValues(alpha: 0.5),
+                          color: AppColors.onBackground.withValues(alpha: 0.65),
                         ),
                         suffixIcon: _searchController.text.isNotEmpty
                             ? IconButton(
@@ -250,7 +250,7 @@ class _HomeViewState extends State<HomeView> {
                     child: Text(
                       'Name',
                       style: TextStyle(
-                        color: AppColors.onBackground.withValues(alpha: 0.4),
+                        color: AppColors.onBackground.withValues(alpha: 0.6),
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0.8,
@@ -262,7 +262,7 @@ class _HomeViewState extends State<HomeView> {
                     child: Text(
                       'Created',
                       style: TextStyle(
-                        color: AppColors.onBackground.withValues(alpha: 0.4),
+                        color: AppColors.onBackground.withValues(alpha: 0.6),
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0.8,

@@ -35,11 +35,12 @@ class FilterCompaniesEvent extends CompaniesEvent {
 
 class CreateCompanyEvent extends CompaniesEvent {
   final String name;
+  final int allowedUsers;
 
-  const CreateCompanyEvent(this.name);
+  const CreateCompanyEvent(this.name, this.allowedUsers);
 
   @override
-  List<Object?> get props => [name];
+  List<Object?> get props => [name, allowedUsers];
 }
 
 class DeleteCompanyEvent extends CompaniesEvent {
@@ -57,6 +58,7 @@ class CompaniesState extends Equatable {
   final String searchQuery;
   final bool? activeFilter;
   final String? actionError;
+  final String? actionSuccess;
 
   const CompaniesState({
     this.status = CompaniesStatus.initial,
@@ -64,6 +66,7 @@ class CompaniesState extends Equatable {
     this.searchQuery = '',
     this.activeFilter,
     this.actionError,
+    this.actionSuccess,
   });
 
   List<Company> get filteredCompanies {
@@ -82,6 +85,7 @@ class CompaniesState extends Equatable {
     String? searchQuery,
     bool? Function()? activeFilterProvider,
     String? Function()? actionErrorProvider,
+    String? Function()? actionSuccessProvider,
   }) {
     return CompaniesState(
       status: status ?? this.status,
@@ -91,12 +95,14 @@ class CompaniesState extends Equatable {
           activeFilterProvider != null ? activeFilterProvider() : activeFilter,
       actionError:
           actionErrorProvider != null ? actionErrorProvider() : actionError,
+      actionSuccess:
+          actionSuccessProvider != null ? actionSuccessProvider() : actionSuccess,
     );
   }
 
   @override
   List<Object?> get props =>
-      [status, allCompanies, searchQuery, activeFilter, actionError];
+      [status, allCompanies, searchQuery, activeFilter, actionError, actionSuccess];
 }
 
 class CompaniesBloc extends Bloc<CompaniesEvent, CompaniesState> {
@@ -148,10 +154,12 @@ class CompaniesBloc extends Bloc<CompaniesEvent, CompaniesState> {
     Emitter<CompaniesState> emit,
   ) async {
     try {
-      final company = await _companyRepository.create(name: event.name);
+      await _companyRepository.create(name: event.name, allowedUsers: event.allowedUsers);
+      final companies = await _companyRepository.getAll();
       emit(state.copyWith(
-        allCompanies: [...state.allCompanies, company],
+        allCompanies: companies,
         actionErrorProvider: () => null,
+        actionSuccessProvider: () => 'Company "${event.name}" created successfully.',
       ));
     } catch (e, st) {
       debugPrint('CompaniesBloc create error: $e\n$st');

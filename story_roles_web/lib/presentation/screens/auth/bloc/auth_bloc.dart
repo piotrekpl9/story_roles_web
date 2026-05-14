@@ -1,9 +1,9 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:story_roles_web/core/utils/result.dart';
-import 'package:story_roles_web/data/usecases/auth/login.dart';
-import 'package:story_roles_web/data/usecases/auth/logout.dart';
-import 'package:story_roles_web/data/usecases/auth/register.dart';
+import 'package:story_roles_web/domain/usecases/auth/login.dart';
+import 'package:story_roles_web/domain/usecases/auth/logout.dart';
+import 'package:story_roles_web/domain/usecases/auth/register.dart';
 import 'package:story_roles_web/domain/repositories/auth_repository.dart';
 
 part 'auth_event.dart';
@@ -43,6 +43,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             email: user.email,
             createdAt: user.createdAt,
             isAdmin: user.isAdmin,
+            companyId: user.companyId,
           ));
         }
       },
@@ -64,6 +65,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         email: user.email,
         createdAt: user.createdAt,
         isAdmin: user.isAdmin,
+        companyId: user.companyId,
         errorMessage: null,
       )),
       onError: (_) => emit(state.copyWith(

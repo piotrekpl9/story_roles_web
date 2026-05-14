@@ -25,7 +25,7 @@ class _RenameDialogState extends State<RenameDialog> {
         decoration: InputDecoration(
           hintText: 'Chapter name',
           hintStyle: TextStyle(
-            color: AppColors.onBackground.withValues(alpha: 0.4),
+            color: AppColors.onBackground.withValues(alpha: 0.6),
           ),
           enabledBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: AppColors.divider),

@@ -1,3 +1,4 @@
+import 'package:story_roles_web/data/models/json_api_parser.dart';
 import 'package:story_roles_web/domain/entities/attributes.dart';
 import 'package:story_roles_web/domain/entities/track.dart';
 
@@ -6,20 +7,27 @@ class AttributesResponseDto {
   final String? imageUrl;
   final DateTime createdAt;
   final String status;
+  final String? emotion;
+  final String? lectorVoice;
 
   AttributesResponseDto({
     required this.title,
     required this.createdAt,
     required this.status,
     this.imageUrl,
+    this.emotion,
+    this.lectorVoice,
   });
 
   factory AttributesResponseDto.fromJson(Map<String, dynamic> json) {
+    final attrs = JsonApiParser.extractAttributes(json);
     return AttributesResponseDto(
-      title: json['title'] as String,
-      imageUrl: json['image_url'] as String?,
-      createdAt: DateTime.parse(json['created_at'] as String),
-      status: json['status'] as String,
+      title: attrs['title'] as String,
+      imageUrl: attrs['image_url'] as String?,
+      createdAt: DateTime.parse(attrs['created_at'] as String),
+      status: attrs['status'] as String,
+      emotion: attrs['emotion'] as String?,
+      lectorVoice: attrs['lector_voice'] as String?,
     );
   }
 
@@ -38,6 +46,8 @@ class AttributesResponseDto {
       imageUrl: imageUrl,
       createdAt: createdAt,
       status: status,
+      emotion: emotion,
+      lectorVoice: lectorVoice,
     );
   }
 
@@ -47,6 +57,8 @@ class AttributesResponseDto {
       status: _mapStatus(status),
       createdAt: createdAt,
       imageUrl: imageUrl,
+      emotion: emotion,
+      lectorVoice: lectorVoice,
     );
   }
 }

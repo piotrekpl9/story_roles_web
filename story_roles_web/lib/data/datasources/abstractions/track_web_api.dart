@@ -9,4 +9,5 @@ abstract class TrackWebApi {
   Future<void> delete(int trackId);
   Future<Map<int, TrackProgress>> getAudioProgresses();
   Future<List<ScriptWord>> getScript(int trackId);
+  Future<List<ScriptWord>> getAlignment(int trackId);
 }

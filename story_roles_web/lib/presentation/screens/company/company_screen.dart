@@ -418,7 +418,7 @@ class _AssignUserDialogState extends State<_AssignUserDialog> {
                     labelStyle: TextStyle(
                         color: AppColors.onBackground.withValues(alpha: 0.6)),
                     prefixIcon:
-                        Icon(Icons.search, color: AppColors.onBackground.withValues(alpha: 0.5)),
+                        Icon(Icons.search, color: AppColors.onBackground.withValues(alpha: 0.65)),
                     filled: true,
                     fillColor: Colors.white.withValues(alpha: 0.06),
                     border: OutlineInputBorder(
