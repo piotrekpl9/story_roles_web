@@ -25,7 +25,7 @@ class ProjectScreen extends StatelessWidget {
       builder:
           (ctx) => AddChapterDialog(
             nameController: nameController,
-            onConfirm: (name, content, bytes, fileName) {
+            onConfirm: (name, content, bytes, fileName, emotion) {
               context.read<ProjectBloc>().add(
                 CreateChapterEvent(
                   projectId: project.id,
@@ -33,6 +33,7 @@ class ProjectScreen extends StatelessWidget {
                   content: content,
                   bytes: bytes,
                   fileName: fileName,
+                  emotion: emotion,
                 ),
               );
             },
@@ -264,6 +265,7 @@ class ProjectScreen extends StatelessWidget {
                       chapter: chapter,
                       tracks: tracks,
                       isGenerating: isGenerating,
+                      isCreating: state.pendingChapterIds.contains(chapter.id),
                       onRename: () => _showRenameDialog(context, chapter),
                       onDelete: () => _showDeleteDialog(context, chapter),
                       onPlayTrack:

@@ -48,28 +48,38 @@ class TrackWebApiImpl implements TrackWebApi {
 
   @override
   Future<List<ScriptWord>> getScript(int trackId) async {
-    final response = await dio.get(DataConsts.endpoints.getScript(trackId));
-    final words = response.data['data']['words'] as List? ?? [];
-    return words
-        .map((e) => ScriptWord(
-              word: e['word'] as String,
-              startMs: (e['start_ms'] as num).toInt(),
-              endMs: (e['end_ms'] as num).toInt(),
-            ))
-        .toList();
+    try {
+      final response = await dio.get(DataConsts.endpoints.getScript(trackId));
+      final words = response.data['data']['words'] as List? ?? [];
+      return words
+          .map((e) => ScriptWord(
+                word: e['word'] as String,
+                startMs: (e['start_ms'] as num).toInt(),
+                endMs: (e['end_ms'] as num).toInt(),
+              ))
+          .toList();
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 404) return [];
+      rethrow;
+    }
   }
 
   @override
   Future<List<ScriptWord>> getAlignment(int trackId) async {
-    final response = await dio.get(DataConsts.endpoints.getAlignment(trackId));
-    final words = response.data['words'] as List? ?? [];
-    return words
-        .map((e) => ScriptWord(
-              word: e['word'] as String,
-              startMs: (e['start_ms'] as num).toInt(),
-              endMs: (e['end_ms'] as num).toInt(),
-            ))
-        .toList();
+    try {
+      final response = await dio.get(DataConsts.endpoints.getAlignment(trackId));
+      final words = response.data['words'] as List? ?? [];
+      return words
+          .map((e) => ScriptWord(
+                word: e['word'] as String,
+                startMs: (e['start_ms'] as num).toInt(),
+                endMs: (e['end_ms'] as num).toInt(),
+              ))
+          .toList();
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 404) return [];
+      rethrow;
+    }
   }
 
   @override

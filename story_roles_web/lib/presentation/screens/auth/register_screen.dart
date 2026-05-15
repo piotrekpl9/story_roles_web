@@ -69,10 +69,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
       listenWhen: (prev, curr) =>
-          prev.status != curr.status &&
-          (curr.status == AuthStatus.registered ||
-              (curr.status == AuthStatus.unauthenticated &&
-                  curr.errorMessage != null)),
+          (prev.status != curr.status && curr.status == AuthStatus.registered) ||
+          (prev.errorMessage != curr.errorMessage && curr.errorMessage != null),
       listener: (context, state) {
         if (state.status == AuthStatus.registered) {
           ScaffoldMessenger.of(context).showSnackBar(

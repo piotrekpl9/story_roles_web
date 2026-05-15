@@ -133,23 +133,52 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> with PollingMixin {
     CreateChapterEvent event,
     Emitter<ProjectState> emit,
   ) async {
-    emit(state.copyWith(chapterActionStatus: ChapterActionStatus.loading));
+    final tempId = -(DateTime.now().millisecondsSinceEpoch);
+    final optimisticChapter = Chapter(
+      id: tempId,
+      projectId: event.projectId,
+      name: event.name,
+      content: event.content,
+      emotion: event.emotion,
+      createdAt: DateTime.now(),
+    );
+    emit(state.copyWith(
+      chapters: [...state.chapters, optimisticChapter],
+      tracksByChapter: {...state.tracksByChapter, tempId: []},
+      pendingChapterIds: {...state.pendingChapterIds, tempId},
+    ));
+
     final result = await _chapterRepository.create(
       projectId: event.projectId,
       name: event.name,
       content: event.content,
       bytes: event.bytes,
       fileName: event.fileName,
+      emotion: event.emotion,
     );
+
+    final pendingWithoutTemp = Set.of(state.pendingChapterIds)..remove(tempId);
+    final tracksWithoutTemp = Map.of(state.tracksByChapter)..remove(tempId);
+
     if (result.isSuccess) {
       final chapter = result.dataOrNull!;
+      final chaptersReplaced = state.chapters
+          .where((c) => c.id != tempId)
+          .toList()
+        ..add(chapter);
       emit(state.copyWith(
-        chapters: [...state.chapters, chapter],
-        tracksByChapter: {...state.tracksByChapter, chapter.id: []},
+        chapters: chaptersReplaced,
+        tracksByChapter: {...tracksWithoutTemp, chapter.id: []},
+        pendingChapterIds: pendingWithoutTemp,
         chapterActionStatus: ChapterActionStatus.success,
       ));
     } else {
-      emit(state.copyWith(chapterActionStatus: ChapterActionStatus.failure));
+      emit(state.copyWith(
+        chapters: state.chapters.where((c) => c.id != tempId).toList(),
+        tracksByChapter: tracksWithoutTemp,
+        pendingChapterIds: pendingWithoutTemp,
+        chapterActionStatus: ChapterActionStatus.failure,
+      ));
     }
     emit(state.copyWith(chapterActionStatus: ChapterActionStatus.idle));
   }
@@ -191,7 +220,6 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> with PollingMixin {
       event.projectId,
       event.chapterId,
       event.lectorVoice,
-      event.emotion,
     );
 
     final updatedGenerating = Set.of(state.generatingChapterIds)

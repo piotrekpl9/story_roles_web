@@ -7,7 +7,7 @@ import 'package:story_roles_web/presentation/utils/app_config/app_colors.dart';
 
 class AddChapterDialog extends StatefulWidget {
   final TextEditingController nameController;
-  final void Function(String name, String content, Uint8List bytes, String fileName) onConfirm;
+  final void Function(String name, String content, Uint8List bytes, String fileName, String emotion) onConfirm;
 
   const AddChapterDialog({
     super.key,
@@ -21,12 +21,14 @@ class AddChapterDialog extends StatefulWidget {
 
 class _AddChapterDialogState extends State<AddChapterDialog> {
   static const int _maxFileSizeBytes = 1 * 1024 * 1024;
+  static const _emotions = ['neutral', 'expressive', 'calm'];
 
   String? _fileName;
   String? _fileContent;
   Uint8List? _fileBytes;
   bool _picking = false;
   String? _fileError;
+  String _selectedEmotion = 'neutral';
 
   Future<void> _pickFile() async {
     setState(() {
@@ -209,6 +211,37 @@ class _AddChapterDialogState extends State<AddChapterDialog> {
                 ),
               ),
             ],
+            const SizedBox(height: 20),
+            Text(
+              'Emotion',
+              style: TextStyle(
+                color: AppColors.onBackground.withValues(alpha: 0.6),
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.6,
+              ),
+            ),
+            const SizedBox(height: 8),
+            DropdownButtonFormField<String>(
+              initialValue: _selectedEmotion,
+              dropdownColor: AppColors.card,
+              style: const TextStyle(color: Colors.white, fontSize: 14),
+              decoration: InputDecoration(
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(6),
+                  borderSide: BorderSide(color: AppColors.onBackground.withValues(alpha: 0.2)),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(6),
+                  borderSide: BorderSide(color: AppColors.primary),
+                ),
+              ),
+              items: _emotions.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+              onChanged: (v) {
+                if (v != null) setState(() => _selectedEmotion = v);
+              },
+            ),
           ],
         ),
       ),
@@ -226,6 +259,7 @@ class _AddChapterDialogState extends State<AddChapterDialog> {
                       _fileContent!,
                       _fileBytes!,
                       _fileName!,
+                      _selectedEmotion,
                     );
                     Navigator.of(context).pop();
                   }

@@ -38,16 +38,18 @@ class CreateChapterEvent extends ProjectEvent {
   final Uint8List bytes;
   final String fileName;
   final String content;
+  final String emotion;
   const CreateChapterEvent({
     required this.projectId,
     required this.name,
     required this.content,
     required this.bytes,
     required this.fileName,
+    required this.emotion,
   });
 
   @override
-  List<Object> get props => [projectId, name, content, bytes, fileName];
+  List<Object> get props => [projectId, name, content, bytes, fileName, emotion];
 }
 
 class UpdateChapterContentEvent extends ProjectEvent {
@@ -73,11 +75,10 @@ class GenerateTracksEvent extends ProjectEvent {
   final int projectId;
   final int chapterId;
   final String lectorVoice;
-  final String emotion;
-  const GenerateTracksEvent(this.projectId, this.chapterId, this.lectorVoice, this.emotion);
+  const GenerateTracksEvent(this.projectId, this.chapterId, this.lectorVoice);
 
   @override
-  List<Object> get props => [projectId, chapterId, lectorVoice, emotion];
+  List<Object> get props => [projectId, chapterId, lectorVoice];
 }
 
 class SilentRefreshProjectEvent extends ProjectEvent {

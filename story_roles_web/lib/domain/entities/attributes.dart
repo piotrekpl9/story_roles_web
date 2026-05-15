@@ -5,7 +5,6 @@ class Attributes {
   final String? imageUrl;
   final DateTime createdAt;
   final TrackStatus status;
-  final String? emotion;
   final String? lectorVoice;
 
   Attributes({
@@ -13,7 +12,6 @@ class Attributes {
     this.imageUrl,
     required this.createdAt,
     required this.status,
-    this.emotion,
     this.lectorVoice,
   });
 }

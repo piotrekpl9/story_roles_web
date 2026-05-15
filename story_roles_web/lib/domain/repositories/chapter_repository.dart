@@ -12,9 +12,10 @@ abstract class ChapterRepository {
     required Uint8List bytes,
     required String fileName,
     required String content,
+    required String emotion,
   });
   Future<Result<void>> rename(int chapterId, String newName);
   Future<Result<void>> updateContent(int chapterId, String content);
   Future<Result<void>> delete(int chapterId);
-  Future<Result<Track>> generateTracks(int projectId, int chapterId, String lectorVoice, String emotion);
+  Future<Result<Track>> generateTracks(int projectId, int chapterId, String lectorVoice);
 }

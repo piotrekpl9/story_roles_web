@@ -15,6 +15,7 @@ class ChapterTile extends StatefulWidget {
   final Chapter chapter;
   final List<Track> tracks;
   final bool isGenerating;
+  final bool isCreating;
   final VoidCallback onRename;
   final VoidCallback onDelete;
   final ValueChanged<Track> onPlayTrack;
@@ -24,6 +25,7 @@ class ChapterTile extends StatefulWidget {
     required this.chapter,
     required this.tracks,
     required this.isGenerating,
+    this.isCreating = false,
     required this.onRename,
     required this.onDelete,
     required this.onPlayTrack,
@@ -69,14 +71,13 @@ class _ChapterTileState extends State<ChapterTile> {
     final bloc = context.read<ProjectBloc>();
     final voices = bloc.state.lectorVoices;
     final repo = context.read<LectorVoiceRepository>();
-    final result = await showDialog<(String, String)>(
+    final result = await showDialog<String>(
       context: context,
       builder: (ctx) => _NarratorDialog(voices: voices, repository: repo),
     );
     if (result != null && context.mounted) {
-      final (voiceId, emotion) = result;
       bloc.add(
-        GenerateTracksEvent(widget.chapter.projectId, widget.chapter.id, voiceId, emotion),
+        GenerateTracksEvent(widget.chapter.projectId, widget.chapter.id, result),
       );
     }
   }
@@ -141,8 +142,10 @@ class _ChapterTileState extends State<ChapterTile> {
                         children: [
                           Text(
                             widget.chapter.name,
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style: TextStyle(
+                              color: widget.isCreating
+                                  ? Colors.white54
+                                  : Colors.white,
                               fontSize: 15,
                               fontWeight: FontWeight.w600,
                             ),
@@ -153,7 +156,7 @@ class _ChapterTileState extends State<ChapterTile> {
                           Row(
                             children: [
                               Text(
-                                formatDate(widget.chapter.createdAt),
+                                widget.isCreating ? 'Creating…' : formatDate(widget.chapter.createdAt),
                                 style: TextStyle(
                                   color: AppColors.onBackground.withValues(
                                     alpha: 0.6,
@@ -167,6 +170,22 @@ class _ChapterTileState extends State<ChapterTile> {
                                   'No file uploaded',
                                   style: TextStyle(
                                     color: Colors.orange.withValues(alpha: 0.7),
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                              if (widget.chapter.emotion != null) ...[
+                                const SizedBox(width: 8),
+                                Icon(
+                                  Icons.mood,
+                                  size: 12,
+                                  color: AppColors.onBackground.withValues(alpha: 0.6),
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  widget.chapter.emotion!,
+                                  style: TextStyle(
+                                    color: AppColors.onBackground.withValues(alpha: 0.6),
                                     fontSize: 12,
                                   ),
                                 ),
@@ -197,8 +216,8 @@ class _ChapterTileState extends State<ChapterTile> {
                       ),
                     ),
 
-                    // Generate audio button (only when content exists)
-                    if (hasContent && _hovered || widget.isGenerating)
+                    // Generate audio button (only when content exists and chapter is persisted)
+                    if (!widget.isCreating && (hasContent && _hovered || widget.isGenerating))
                       Padding(
                         padding: const EdgeInsets.only(right: 8),
                         child:
@@ -251,7 +270,7 @@ class _ChapterTileState extends State<ChapterTile> {
                       ),
 
                     // Rename / change file / delete
-                    if (_hovered) ...[
+                    if (_hovered && !widget.isCreating) ...[
                       IconButton(
                         tooltip: 'Change source file',
                         icon: Icon(
@@ -282,7 +301,19 @@ class _ChapterTileState extends State<ChapterTile> {
                         onPressed: widget.onDelete,
                         splashRadius: 16,
                       ),
-                    ] else
+                    ] else if (widget.isCreating)
+                      Padding(
+                        padding: const EdgeInsets.only(right: 12),
+                        child: SizedBox(
+                          width: 14,
+                          height: 14,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 1.5,
+                            color: AppColors.onBackground.withValues(alpha: 0.4),
+                          ),
+                        ),
+                      )
+                    else
                       const SizedBox(width: 96),
                   ],
                 ),
@@ -448,9 +479,6 @@ class _NarratorDialogState extends State<_NarratorDialog> {
   String? _playingId;
   bool _loading = false;
   String? _selectedVoiceId;
-  String _selectedEmotion = 'neutral';
-
-  static const _emotions = ['neutral', 'expressive', 'calm'];
 
   @override
   void initState() {
@@ -562,44 +590,6 @@ class _NarratorDialogState extends State<_NarratorDialog> {
           );
         }),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Emotion',
-                style: TextStyle(
-                  color: AppColors.onBackground.withValues(alpha: 0.6),
-                  fontSize: 12,
-                ),
-              ),
-              const SizedBox(height: 6),
-              DropdownButtonFormField<String>(
-                initialValue: _selectedEmotion,
-                dropdownColor: AppColors.card,
-                style: const TextStyle(color: Colors.white, fontSize: 14),
-                decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(6),
-                    borderSide: BorderSide(color: AppColors.onBackground.withValues(alpha: 0.2)),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(6),
-                    borderSide: BorderSide(color: AppColors.primary),
-                  ),
-                ),
-                items: _emotions
-                    .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                    .toList(),
-                onChanged: (v) {
-                  if (v != null) setState(() => _selectedEmotion = v);
-                },
-              ),
-            ],
-          ),
-        ),
-        Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -609,7 +599,7 @@ class _NarratorDialogState extends State<_NarratorDialog> {
             ),
             onPressed: _selectedVoiceId == null
                 ? null
-                : () => Navigator.of(context).pop((_selectedVoiceId!, _selectedEmotion)),
+                : () => Navigator.of(context).pop(_selectedVoiceId!),
             child: const Text('Generate'),
           ),
         ),

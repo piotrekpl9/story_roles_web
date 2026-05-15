@@ -28,10 +28,12 @@ class ChapterWebApiImpl implements ChapterWebApi {
     required Uint8List bytes,
     required String fileName,
     required String content,
+    required String emotion,
   }) async {
     final formData = FormData();
     formData.fields.add(MapEntry('name', name));
     formData.fields.add(MapEntry('content', content));
+    formData.fields.add(MapEntry('emotion', emotion));
     formData.files.add(
       MapEntry('file', MultipartFile.fromBytes(bytes, filename: fileName)),
     );
@@ -73,10 +75,10 @@ class ChapterWebApiImpl implements ChapterWebApi {
   }
 
   @override
-  Future<TrackResponseDto> generateTracks(int projectId, int chapterId, String lectorVoice, String emotion) async {
+  Future<TrackResponseDto> generateTracks(int projectId, int chapterId, String lectorVoice) async {
     final response = await dio.post(
       DataConsts.endpoints.generateChapterTracks(projectId, chapterId),
-      data: {'lector_voice': int.parse(lectorVoice), 'emotion': emotion},
+      data: {'lector_voice': int.parse(lectorVoice)},
     );
     final trackJson = response.data['data']['track'] as Map<String, dynamic>;
     final dto = TrackResponseDto.fromJson(trackJson);

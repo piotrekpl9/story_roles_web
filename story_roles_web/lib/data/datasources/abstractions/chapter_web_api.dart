@@ -11,9 +11,10 @@ abstract class ChapterWebApi {
     required Uint8List bytes,
     required String fileName,
     required String content,
+    required String emotion,
   });
   Future<void> rename(int chapterId, String newName);
   Future<void> updateContent(int chapterId, String content);
   Future<void> delete(int chapterId);
-  Future<TrackResponseDto> generateTracks(int projectId, int chapterId, String lectorVoice, String emotion);
+  Future<TrackResponseDto> generateTracks(int projectId, int chapterId, String lectorVoice);
 }

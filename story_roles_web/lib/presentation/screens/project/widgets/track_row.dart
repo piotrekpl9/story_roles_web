@@ -98,18 +98,6 @@ class _TrackRowState extends State<TrackRow>
                     ),
                   ),
                 ],
-                if (widget.track.attributes.emotion != null) ...[
-                  const SizedBox(width: 12),
-                  Icon(Icons.mood, size: 12, color: AppColors.onBackground.withValues(alpha: 0.55)),
-                  const SizedBox(width: 4),
-                  Text(
-                    widget.track.attributes.emotion!,
-                    style: TextStyle(
-                      color: AppColors.onBackground.withValues(alpha: 0.55),
-                      fontSize: 11,
-                    ),
-                  ),
-                ],
                 const SizedBox(width: 16),
                 if (ready)
                   const Text(

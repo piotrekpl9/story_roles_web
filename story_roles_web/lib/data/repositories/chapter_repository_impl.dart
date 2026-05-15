@@ -29,6 +29,7 @@ class ChapterRepositoryImpl implements ChapterRepository {
     required Uint8List bytes,
     required String fileName,
     required String content,
+    required String emotion,
   }) async {
     try {
       final dto = await chapterWebApi.create(
@@ -37,6 +38,7 @@ class ChapterRepositoryImpl implements ChapterRepository {
         content: content,
         bytes: bytes,
         fileName: fileName,
+        emotion: emotion,
       );
       return Success(dto.toDomain());
     } catch (_) {
@@ -75,9 +77,9 @@ class ChapterRepositoryImpl implements ChapterRepository {
   }
 
   @override
-  Future<Result<Track>> generateTracks(int projectId, int chapterId, String lectorVoice, String emotion) async {
+  Future<Result<Track>> generateTracks(int projectId, int chapterId, String lectorVoice) async {
     try {
-      final dto = await chapterWebApi.generateTracks(projectId, chapterId, lectorVoice, emotion);
+      final dto = await chapterWebApi.generateTracks(projectId, chapterId, lectorVoice);
       return Success(dto.toDomain());
     } catch (_) {
       return Error(const ServerFailure('Failed to generate tracks'));

@@ -7,7 +7,6 @@ class AttributesResponseDto {
   final String? imageUrl;
   final DateTime createdAt;
   final String status;
-  final String? emotion;
   final String? lectorVoice;
 
   AttributesResponseDto({
@@ -15,7 +14,6 @@ class AttributesResponseDto {
     required this.createdAt,
     required this.status,
     this.imageUrl,
-    this.emotion,
     this.lectorVoice,
   });
 
@@ -26,7 +24,6 @@ class AttributesResponseDto {
       imageUrl: attrs['image_url'] as String?,
       createdAt: DateTime.parse(attrs['created_at'] as String),
       status: attrs['status'] as String,
-      emotion: attrs['emotion'] as String?,
       lectorVoice: attrs['lector_voice'] as String?,
     );
   }
@@ -46,7 +43,6 @@ class AttributesResponseDto {
       imageUrl: imageUrl,
       createdAt: createdAt,
       status: status,
-      emotion: emotion,
       lectorVoice: lectorVoice,
     );
   }
@@ -57,7 +53,6 @@ class AttributesResponseDto {
       status: _mapStatus(status),
       createdAt: createdAt,
       imageUrl: imageUrl,
-      emotion: emotion,
       lectorVoice: lectorVoice,
     );
   }

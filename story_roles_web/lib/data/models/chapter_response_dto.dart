@@ -6,6 +6,7 @@ class ChapterResponseDto {
   final int projectId;
   final String name;
   final String? content;
+  final String? emotion;
   final DateTime createdAt;
 
   const ChapterResponseDto({
@@ -13,6 +14,7 @@ class ChapterResponseDto {
     required this.projectId,
     required this.name,
     this.content,
+    this.emotion,
     required this.createdAt,
   });
 
@@ -23,6 +25,7 @@ class ChapterResponseDto {
       projectId: int.parse(src['project_id'].toString()),
       name: src['name'] as String,
       content: src['content'] as String?,
+      emotion: src['emotion'] as String?,
       createdAt: DateTime.parse(src['created_at'] as String),
     );
   }
@@ -32,6 +35,7 @@ class ChapterResponseDto {
         projectId: projectId,
         name: name,
         content: content,
+        emotion: emotion,
         createdAt: createdAt,
       );
 }

@@ -5,6 +5,7 @@ class Chapter extends Equatable {
   final int projectId;
   final String name;
   final String? content;
+  final String? emotion;
   final DateTime createdAt;
 
   const Chapter({
@@ -12,6 +13,7 @@ class Chapter extends Equatable {
     required this.projectId,
     required this.name,
     this.content,
+    this.emotion,
     required this.createdAt,
   });
 
@@ -20,6 +22,7 @@ class Chapter extends Equatable {
     int? projectId,
     String? name,
     String? content,
+    String? emotion,
     DateTime? createdAt,
   }) {
     return Chapter(
@@ -27,10 +30,11 @@ class Chapter extends Equatable {
       projectId: projectId ?? this.projectId,
       name: name ?? this.name,
       content: content ?? this.content,
+      emotion: emotion ?? this.emotion,
       createdAt: createdAt ?? this.createdAt,
     );
   }
 
   @override
-  List<Object?> get props => [id, projectId, name, content, createdAt];
+  List<Object?> get props => [id, projectId, name, content, emotion, createdAt];
 }

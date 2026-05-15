@@ -65,19 +65,14 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
-      listenWhen: (prev, curr) =>
-          prev.status != curr.status &&
-          (curr.status == AuthStatus.unauthenticated ||
-              curr.status == AuthStatus.authenticated),
+      listenWhen: (prev, curr) => prev.errorMessage != curr.errorMessage && curr.errorMessage != null,
       listener: (context, state) {
-        if (state.errorMessage != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(AppLocalizations.of(context)!.loginFailed),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.loginFailed),
+            backgroundColor: Colors.red,
+          ),
+        );
       },
       child: Scaffold(
         backgroundColor: AppColors.background,
