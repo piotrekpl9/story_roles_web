@@ -31,6 +31,8 @@ class HttpTrackAudioSource implements TrackAudioSource {
       if (seconds != null && seconds > 0) {
         return Duration(seconds: seconds.toInt());
       }
+    } on DioException catch (e) {
+      if (e.response?.statusCode != 404) rethrow;
     } catch (_) {}
     return Duration.zero;
   }
