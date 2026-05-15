@@ -11,12 +11,8 @@ class ApiErrorInterceptor extends Interceptor {
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
     final statusCode = response.statusCode ?? 0;
-    if (statusCode >= 400) {
-      // ignore: avoid_print
-      print('[ApiError] status=$statusCode data=${response.data} type=${response.data.runtimeType}');
+    if (statusCode >= 400 && statusCode != 404) {
       final messages = _parseMessages(response.data);
-      // ignore: avoid_print
-      print('[ApiError] parsed messages=$messages');
       if (messages.isNotEmpty) _controller.add(messages);
     }
     handler.next(response);
