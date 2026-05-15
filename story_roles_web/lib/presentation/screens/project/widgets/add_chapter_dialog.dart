@@ -20,7 +20,7 @@ class AddChapterDialog extends StatefulWidget {
 }
 
 class _AddChapterDialogState extends State<AddChapterDialog> {
-  static const int _maxFileSizeBytes = 5 * 1024;
+  static const int _maxFileSizeBytes = 1 * 1024 * 1024;
 
   String? _fileName;
   String? _fileContent;
@@ -43,7 +43,7 @@ class _AddChapterDialogState extends State<AddChapterDialog> {
         final bytes = result.files.single.bytes!;
         if (bytes.length > _maxFileSizeBytes) {
           setState(() {
-            _fileError = 'File is too large. Maximum size is 5 KB.';
+            _fileError = 'File is too large. Maximum size is 1 MB.';
             _fileName = null;
             _fileContent = null;
             _fileBytes = null;

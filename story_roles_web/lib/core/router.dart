@@ -23,8 +23,9 @@ import 'package:story_roles_web/presentation/screens/profile/profile_screen.dart
 import 'package:story_roles_web/presentation/screens/project/bloc/project_bloc.dart';
 import 'package:story_roles_web/presentation/screens/project/project_screen.dart';
 
-GoRouter buildRouter(AuthBloc authBloc) {
+GoRouter buildRouter(AuthBloc authBloc, {GlobalKey<NavigatorState>? navigatorKey}) {
   return GoRouter(
+    navigatorKey: navigatorKey,
     initialLocation: '/projects',
     redirect: (context, state) {
       final status = authBloc.state.status;

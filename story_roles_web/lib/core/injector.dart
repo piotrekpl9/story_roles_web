@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:story_roles_web/core/consts.dart';
+import 'package:story_roles_web/data/core/api_error_interceptor.dart';
 import 'package:story_roles_web/data/core/token_interceptor.dart';
 import 'package:story_roles_web/data/core/unauthorized_interceptor.dart';
 import 'package:story_roles_web/data/datasources/abstractions/auth_web_api.dart';
@@ -75,12 +76,15 @@ class Injector {
       ..validateStatus = (status) => status != null && status < 500;
     dio.options.responseDecoder =
         (bytes, request, response) => utf8.decode(bytes, allowMalformed: false);
+    final apiErrorInterceptor = ApiErrorInterceptor();
+    dio.interceptors.add(apiErrorInterceptor);
     dio.interceptors.add(TokenInterceptor(storageDataSource: _getIt()));
     final unauthorizedInterceptor = UnauthorizedInterceptor(
       storageDataSource: _getIt(),
     );
     dio.interceptors.add(unauthorizedInterceptor);
     _getIt.registerSingleton<Dio>(dio);
+    _getIt.registerSingleton<ApiErrorInterceptor>(apiErrorInterceptor);
     _getIt.registerSingleton<UnauthorizedInterceptor>(unauthorizedInterceptor);
   }
 
