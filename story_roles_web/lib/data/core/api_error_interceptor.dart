@@ -24,10 +24,13 @@ class ApiErrorInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
-    final data = err.response?.data;
-    if (data != null) {
-      final messages = _parseMessages(data);
-      if (messages.isNotEmpty) _controller.add(messages);
+    final statusCode = err.response?.statusCode ?? 0;
+    if (statusCode != 404) {
+      final data = err.response?.data;
+      if (data != null) {
+        final messages = _parseMessages(data);
+        if (messages.isNotEmpty) _controller.add(messages);
+      }
     }
     handler.next(err);
   }
